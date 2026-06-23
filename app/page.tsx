@@ -73,10 +73,10 @@ export default function Home() {
     {[
       ['🍄', 'Mushroom Keeper', 'M-0001'],
       ['👽', 'Intergalactic Guide', 'A-0001'],
-      ['🌱', 'Sprout Trader', 'S-0001'],
-      ['🛸', 'The Visitor', 'F-0001'],
       ['🏮', 'Yūhosha Collector of Moments', 'R-0001'],
+      ['🛸', 'The Visitor', 'F-0001'],
       ['❤️', 'Heart Keeper', 'H-0001'],
+      ['🌱', 'Sprout Trader', 'S-0001'],
       ['🦆', 'Duck of Distinction', 'D-0001'],
     ].map(([emoji, name, id]) => (
       <a
