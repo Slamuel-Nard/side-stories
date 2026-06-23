@@ -72,7 +72,7 @@ export default function Home() {
   <div className="grid gap-4 md:grid-cols-3">
     {[
       ['🍄', 'Mushroom Keeper', 'M-0001'],
-      ['👽', 'Alien Companion', 'A-0001'],
+      ['👽', 'Intergalactic Guide', 'A-0001'],
       ['🌱', 'Sprout Trader', 'S-0001'],
       ['🛸', 'The Visitor', 'F-0001'],
       ['🏮', 'Yūhosha Collector of Moments', 'R-0001'],
