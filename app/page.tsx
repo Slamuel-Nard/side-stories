@@ -1,3 +1,15 @@
+const artifacts = [
+  'M-0001',
+  'A-0001',
+  'S-0001',
+  'F-0001',
+  'R-0001',
+  'H-0001',
+  'D-0001',
+]
+
+const randomArtifact =
+  artifacts[Math.floor(Math.random() * artifacts.length)]
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -21,10 +33,10 @@ export default function Home() {
 
         <div className="flex justify-center gap-4">
           <a
-            href="/artifact/M-0001"
+            href={`/artifact/${randomArtifact}`}
             className="px-6 py-4 bg-yellow-500 text-black font-bold rounded-xl"
           >
-            View An Artifact
+            Discover An Artifact
           </a>
 
           <a
