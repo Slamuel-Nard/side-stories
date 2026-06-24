@@ -46,7 +46,13 @@ const uniqueLocations = new Set(
 <p className="text-yellow-600 uppercase tracking-wide mt-2 text-sm">
   Founding Relic
 </p>
-
+{artifact.image_url && (
+  <img
+    src={artifact.image_url}
+    alt={artifact.name}
+    className="w-full max-w-xs mx-auto my-8 rounded-2xl border border-yellow-700/40 shadow-[0_0_35px_rgba(250,204,21,0.25)]"
+  />
+)}
 <div className="flex flex-wrap gap-3 mb-6 text-sm">
   <div className="bg-zinc-950 border border-yellow-700/40 p-6 rounded-2xl shadow-[0_0_30px_rgba(234,179,8,0.08)]">
     Artifact ID: {artifact.id}
