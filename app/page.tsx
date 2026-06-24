@@ -6,7 +6,7 @@ const artifacts = [
     name: 'Mushroom Keeper',
     relic: 'The First Relic',
     id: 'M-0001',
-    image: '/Artifacts/mushroom-keeper.png',
+    image: '/artifacts/mushroom-keeper.png',
     quest: 'Bestow this relic upon a worthy traveler before the night ends.',
   },
   {
@@ -14,7 +14,7 @@ const artifacts = [
     name: 'Intergalactic Guide',
     relic: 'The Second Relic',
     id: 'A-0001',
-    image: '/Artifacts/intergalactic-guide.png',
+    image: '/artifacts/intergalactic-guide.png',
     quest: 'Find someone who could use a guide through the night.',
   },
   {
@@ -22,7 +22,7 @@ const artifacts = [
     name: 'Yūhosha Collector of Moments',
     relic: 'The Third Relic',
     id: 'R-0001',
-    image: '/Artifacts/yuhosha.png',
+    image: '/artifacts/yuhosha.png',
     quest: 'Share a memory with a stranger and continue the story.',
   },
   {
@@ -30,7 +30,7 @@ const artifacts = [
     name: 'The Visitor',
     relic: 'The Fourth Relic',
     id: 'F-0001',
-    image: '/Artifacts/visitor.png',
+    image: '/artifacts/visitor.png',
     quest: 'Seek out a traveler standing alone and meet them.',
   },
   {
@@ -38,7 +38,7 @@ const artifacts = [
     name: 'Heart Keeper',
     relic: 'The Fifth Relic',
     id: 'H-0001',
-    image: '/Artifacts/heart-keeper.png',
+    image: '/artifacts/heart-keeper.png',
     quest: 'Give this relic to someone who made your night better.',
   },
   {
@@ -46,7 +46,7 @@ const artifacts = [
     name: 'Sprout Trader',
     relic: 'The Sixth Relic',
     id: 'S-0001',
-    image: '/Artifacts/sprout-trader.png',
+    image: '/artifacts/sprout-trader.png',
     quest: 'Trade this artifact for another artifact.',
   },
   {
@@ -54,7 +54,7 @@ const artifacts = [
     name: 'Duck of Distinction',
     relic: 'The Seventh Relic',
     id: 'D-0001',
-    image: '/Artifacts/duck.png',
+    image: '/artifacts/duck.png',
     quest: 'Award this relic to someone who improved the vibes.',
   },
 ]
