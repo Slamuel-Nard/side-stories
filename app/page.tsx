@@ -289,7 +289,40 @@ export default async function Home() {
             </div>
           )}
         </section>
+<footer className="mt-24 border-t border-yellow-700/30 pt-12 pb-6 text-center">
 
+  <div className="max-w-3xl mx-auto">
+
+    <p className="text-yellow-500 uppercase tracking-[0.35em] text-sm mb-6">
+      Until We Meet Again
+    </p>
+
+    <p className="font-serif text-3xl text-white leading-relaxed mb-6">
+      Every relic carries a story.
+      <br />
+      Every traveler leaves a mark.
+    </p>
+
+    <p className="text-zinc-400 leading-loose max-w-2xl mx-auto">
+      Side Stories is a living collection of quests, memories,
+      and unexpected human connections.
+      Somewhere, one of these relics is still traveling.
+      Perhaps the next chapter belongs to you.
+    </p>
+
+    <div className="h-px w-48 bg-yellow-700/40 mx-auto my-10"></div>
+
+    <p className="text-yellow-400 font-serif text-xl">
+      — The Merchant of Mischief
+    </p>
+
+    <p className="text-zinc-600 text-sm mt-8">
+      © {new Date().getFullYear()} Discover Side Stories
+    </p>
+
+  </div>
+
+</footer>
       </div>
     </main>
   )
