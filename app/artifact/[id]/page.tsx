@@ -26,21 +26,24 @@ const uniqueLocations = new Set(
 ).size
   if (!artifact) {
     return (
-      <main className="min-h-screen bg-black text-white p-6 bg-[radial-gradient(circle_at_top,#3a2a00_0%,#000_45%)]">
+      <main className="min-h-screen text-white p-6 bg-gradient-to-b from-yellow-950 via-black to-black">
         <h1>Artifact not found</h1>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6 bg-[radial-gradient(circle_at_top,#3a2a00_0%,#000_45%)]">
-      <div className="max-w-2xl mx-auto border border-yellow-700/40 rounded-3xl p-6 shadow-[0_0_60px_rgba(234,179,8,0.15)] bg-black/80">
+    <main className="min-h-screen text-white p-6 bg-gradient-to-b from-yellow-950 via-black to-black">
+      <div className="max-w-2xl mx-auto border-2 border-yellow-600 rounded-3xl p-8 bg-zinc-950 shadow-2xl">
         <p className="text-yellow-400 mb-2 tracking-widest">
   LEGENDARY ARTIFACT
 </p>
 
-<h1 className="text-5xl font-bold mb-3">
+<h1 className="text-5xl font-bold text-yellow-400 tracking-wide">
   {artifact.name}
+  <p className="text-yellow-600 uppercase tracking-[0.3em] mt-2">
+  Legendary Artifact Archive
+</p>
 </h1>
 
 <div className="flex flex-wrap gap-3 mb-6 text-sm">
