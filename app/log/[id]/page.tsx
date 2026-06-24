@@ -65,6 +65,12 @@ redirect(`/artifact/${id}`)
 }
   return (
    <main className="min-h-screen text-white p-6 bg-gradient-to-b from-yellow-950 via-black to-black">
+    <a
+  href={`/artifact/${id}`}
+  className="fixed top-6 left-6 z-50 flex items-center gap-2 rounded-full border border-yellow-700/50 bg-black/70 px-5 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-yellow-400 backdrop-blur-md transition-all duration-300 hover:border-yellow-400 hover:bg-yellow-500 hover:text-black hover:shadow-[0_0_20px_rgba(250,204,21,0.35)]"
+>
+  ← Back to the Relic
+</a>
   <div className="max-w-3xl mx-auto rounded-3xl border-2 border-yellow-600 p-8 bg-zinc-950 shadow-2xl">
     <p className="text-yellow-400 uppercase tracking-[0.35em] text-sm mb-4">
       Add Your Chapter
