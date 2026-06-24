@@ -32,20 +32,6 @@ const uniqueLocations = new Set(
       className="fixed left-6 top-6 z-[9999] rounded-full border border-yellow-500 bg-black px-4 py-2 text-sm font-bold text-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.25)] hover:bg-yellow-500 hover:text-black transition">
       ← Home
     </a>
-<div className="max-w-2xl mx-auto mb-6">
-  <a
-    href="/"
-    className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.25em] text-yellow-500 transition hover:text-yellow-300"
-  >
-    ✦ Archive
-  </a>
-
-  <span className="mx-3 text-yellow-700">/</span>
-
-  <span className="text-zinc-400 uppercase tracking-[0.25em]">
-    {artifact.name}
-  </span>
-</div>
     <div className="max-w-2xl mx-auto border-2 border-yellow-600 rounded-3xl p-8 bg-zinc-950 shadow-2xl">
         <h1>Artifact not found</h1>
          </div>
@@ -53,10 +39,25 @@ const uniqueLocations = new Set(
     )
   }
 
-  return (
-    <main className="min-h-screen text-white p-6 bg-gradient-to-b from-yellow-950 via-black to-black">
+   return (
+  <main className="min-h-screen text-white p-6 bg-gradient-to-b from-yellow-950 via-black to-black">
      
-      <div className="max-w-2xl mx-auto border-2 border-yellow-600 rounded-3xl p-8 bg-zinc-950 shadow-2xl">
+    <div className="max-w-2xl mx-auto mb-6">
+      <a
+        href="/"
+        className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.25em] text-yellow-500 transition hover:text-yellow-300"
+      >
+        ✦ Archive
+      </a>
+
+      <span className="mx-3 text-yellow-700">/</span>
+
+      <span className="text-zinc-400 uppercase tracking-[0.25em]">
+        {artifact.name}
+      </span>
+    </div>
+
+    <div className="max-w-2xl mx-auto border-2 border-yellow-600 rounded-3xl p-8 bg-zinc-950 shadow-2xl">
   <div className="text-center mb-10">
   <div className="flex items-center justify-center gap-4 text-yellow-500 uppercase tracking-[0.35em] text-sm mb-4">
     <span className="h-px w-24 bg-yellow-700/50" />
