@@ -35,107 +35,137 @@ const uniqueLocations = new Set(
   return (
     <main className="min-h-screen text-white p-6 bg-gradient-to-b from-yellow-950 via-black to-black">
       <div className="max-w-2xl mx-auto border-2 border-yellow-600 rounded-3xl p-8 bg-zinc-950 shadow-2xl">
-        <p className="text-yellow-400 mb-2 tracking-widest">
-  LEGENDARY ARTIFACT
-</p>
-
-<h1 className="text-5xl font-bold text-yellow-400 tracking-wide">
-  {artifact.name}
-</h1>
-
-<p className="text-yellow-600 uppercase tracking-wide mt-2 text-sm">
-  Founding Relic
-</p>
-{artifact.image_url && (
-  <img
-    src={artifact.image_url}
-    alt={artifact.name}
-    className="w-full max-w-xs mx-auto my-8 rounded-2xl border border-yellow-700/40 shadow-[0_0_35px_rgba(250,204,21,0.25)]"
-  />
-)}
-<div className="flex flex-wrap gap-3 mb-6 text-sm">
-  <div className="bg-zinc-950 border border-yellow-700/40 p-6 rounded-2xl shadow-[0_0_30px_rgba(234,179,8,0.08)]">
-    Artifact ID: {artifact.id}
+  <div className="text-center mb-10">
+  <div className="flex items-center justify-center gap-4 text-yellow-500 uppercase tracking-[0.35em] text-sm mb-4">
+    <span className="h-px w-24 bg-yellow-700/50" />
+    Legendary Artifact
+    <span className="h-px w-24 bg-yellow-700/50" />
   </div>
 
-  <div className="bg-zinc-950 border border-yellow-700/40 p-6 rounded-2xl shadow-[0_0_30px_rgba(234,179,8,0.08)]">
-    Chapters Recorded: {stories?.length || 0}
- </div>
+  <h1 className="text-6xl md:text-7xl font-serif font-bold text-yellow-400 drop-shadow-[0_0_18px_rgba(250,204,21,0.35)]">
+    {artifact.name}
+  </h1>
 
- <div className="bg-yellow-500 text-black font-bold rounded-full w-24 h-24 flex items-center justify-center">
-  Active
-</div>
+  <div className="flex items-center justify-center gap-4 mt-4 text-yellow-600 uppercase tracking-[0.35em] text-sm">
+    <span className="h-px w-20 bg-yellow-800/60" />
+    Founding Relic
+    <span className="h-px w-20 bg-yellow-800/60" />
+  </div>
 </div>
 
-<p className="text-zinc-300 mb-8">
+{artifact.image_url && (
+  <div className="relative mx-auto mb-10 max-w-2xl">
+    <div className="absolute inset-0 rounded-[2rem] bg-yellow-500/20 blur-3xl" />
+    <img
+      src={artifact.image_url}
+      alt={artifact.name}
+      className="relative w-full rounded-2xl border border-yellow-700/60 shadow-[0_0_45px_rgba(250,204,21,0.28)]"
+    />
+  </div>
+)}
+
+<div className="mb-10 mx-auto max-w-4xl rounded-2xl border border-yellow-700/40 bg-black/40 shadow-[0_0_35px_rgba(250,204,21,0.12)] overflow-hidden">
+  <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-yellow-700/30">
+    <div className="p-6 text-center">
+      <p className="text-xs uppercase tracking-[0.25em] text-yellow-700 mb-2">
+        Artifact ID
+      </p>
+      <p className="text-2xl font-serif text-white">{artifact.id}</p>
+    </div>
+
+    <div className="p-6 text-center">
+      <p className="text-xs uppercase tracking-[0.25em] text-yellow-700 mb-2">
+        Chapters Recorded
+      </p>
+      <p className="text-2xl font-serif text-white">{stories?.length || 0}</p>
+    </div>
+
+    <div className="p-6 text-center">
+      <p className="text-xs uppercase tracking-[0.25em] text-yellow-700 mb-2">
+        Status
+      </p>
+      <p className="text-2xl font-serif text-yellow-400">Active</p>
+    </div>
+  </div>
+</div>
+
+<p className="max-w-4xl mx-auto text-zinc-300 mb-8 text-lg">
+  <span className="text-yellow-400 mr-3">✦</span>
   If this artifact has reached you, its story is now partially yours.
 </p>
 
-        <div className="bg-zinc-900 p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-3">
-          <div className="flex gap-3 flex-wrap mt-4">
-  <div className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
-    Chapters: {chapterCount}
-  </div>
+<section className="max-w-4xl mx-auto mb-8 rounded-2xl border border-yellow-700/40 bg-black/40 overflow-hidden shadow-[0_0_35px_rgba(250,204,21,0.10)]">
+  <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
+    <div className="hidden md:flex items-center justify-center border-r border-yellow-700/30 p-8">
+      <div className="w-28 h-28 rounded-full border border-yellow-500/60 flex items-center justify-center text-5xl text-yellow-400 shadow-[0_0_30px_rgba(250,204,21,0.25)]">
+        ✦
+      </div>
+    </div>
 
-  <div className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
-    Holders: {chapterCount}
-  </div>
+    <div className="p-8">
+      <h2 className="font-serif text-3xl text-yellow-400 uppercase tracking-[0.25em] mb-4">
+        Quest
+      </h2>
 
-  <div className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
-    Locations: {uniqueLocations}
-  </div>
-</div>
-            Quest
-          </h2>
+      <div className="h-px w-32 bg-yellow-700/60 mb-6" />
 
-          <p>{artifact.quest}</p>
-          <div className="mt-8">
-  <h2 className="text-xl font-semibold mb-4">
+      <p className="text-zinc-300 text-xl leading-relaxed">
+        {artifact.quest}
+      </p>
+    </div>
+  </div>
+</section>
+
+<section className="max-w-4xl mx-auto rounded-2xl border border-yellow-700/40 bg-black/40 p-8 shadow-[0_0_35px_rgba(250,204,21,0.10)]">
+  <h2 className="font-serif text-3xl text-yellow-400 uppercase tracking-[0.25em] mb-3">
     Traveler History
   </h2>
 
+  <div className="h-px w-72 bg-yellow-700/60 mb-8" />
+
   {stories?.length === 0 ? (
-    <p className="text-zinc-400">
-      No chapters have been recorded yet.
-    </p>
+    <p className="text-zinc-400">No chapters have been recorded yet.</p>
   ) : (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {stories?.map((story, index) => (
         <div
           key={story.id}
-          className="bg-zinc-950 border border-zinc-800 p-5 rounded-2xl"
+          className="relative overflow-hidden rounded-2xl border border-yellow-700/40 bg-zinc-950/80 p-8 shadow-inner"
         >
-          <p className="text-yellow-400 mb-2">
+          <div className="absolute right-8 top-8 text-yellow-900/20 text-8xl">
+            ✦
+          </div>
+
+          <p className="text-yellow-400 text-lg mb-4">
             Chapter {index + 1}
           </p>
 
-          <p className="font-semibold">
-  {story.traveler_name || 'Anonymous Traveler'}
-</p>
+          <p className="font-serif text-3xl text-white mb-2">
+            {story.traveler_name || 'Anonymous Traveler'}
+          </p>
 
-<p className="text-sm text-zinc-400">
-  {story.event}
-</p>
+          <p className="text-zinc-500 mb-6">
+            {story.event} <span className="mx-2">•</span>
+            {new Date(story.created_at).toLocaleDateString()}
+          </p>
 
-<p className="text-xs text-zinc-500 mb-2">
-  {new Date(story.created_at).toLocaleDateString()}
-</p>
-
-          <p>{story.story}</p>
+          <p className="text-zinc-300 text-lg leading-relaxed">
+            {story.story}
+          </p>
         </div>
       ))}
     </div>
   )}
+
+  <a
+    href={`/log/${artifact.id}`}
+    className="group mt-8 flex items-center justify-between rounded-xl border border-yellow-600/70 bg-yellow-500 px-6 py-4 text-black font-bold text-xl tracking-wide shadow-[0_0_25px_rgba(250,204,21,0.25)] hover:bg-yellow-400 transition"
+  >
+    <span>Add Your Chapter</span>
+    <span className="text-2xl group-hover:translate-x-1 transition">✦</span>
+  </a>
+</section>
 </div>
-          <a
-  href={`/log/${artifact.id}`}
-  className="inline-block mt-6 px-6 py-3 bg-yellow-500 text-black font-bold rounded-lg"
->
-  Add Your Chapter
-</a>
-        </div>
-      </div>
     </main>
   )
 }
