@@ -147,7 +147,7 @@ redirect(`/artifact/${id}`)
         />
 
         <input
-          name="ig_handle"
+          name="instagram_handle"
           className="w-full rounded-xl border border-yellow-700/40 bg-black/50 p-4 text-white placeholder:text-zinc-500 focus:outline-none focus:border-yellow-400"
           placeholder="Leave a way to be remembered, optional"
         />
