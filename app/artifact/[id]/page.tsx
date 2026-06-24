@@ -26,15 +26,15 @@ const uniqueLocations = new Set(
 ).size
   if (!artifact) {
     return (
-      <main className="min-h-screen bg-black text-white p-6">
+      <main className="min-h-screen bg-black text-white p-6 bg-[radial-gradient(circle_at_top,#3a2a00_0%,#000_45%)]">
         <h1>Artifact not found</h1>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-xl mx-auto">
+    <main className="min-h-screen bg-black text-white p-6 bg-[radial-gradient(circle_at_top,#3a2a00_0%,#000_45%)]">
+      <div className="max-w-2xl mx-auto border border-yellow-700/40 rounded-3xl p-6 shadow-[0_0_60px_rgba(234,179,8,0.15)] bg-black/80">
         <p className="text-yellow-400 mb-2 tracking-widest">
   LEGENDARY ARTIFACT
 </p>
@@ -44,11 +44,11 @@ const uniqueLocations = new Set(
 </h1>
 
 <div className="flex flex-wrap gap-3 mb-6 text-sm">
-  <span className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
+  <div className="bg-zinc-950 border border-yellow-700/40 p-6 rounded-2xl shadow-[0_0_30px_rgba(234,179,8,0.08)]">
     Artifact ID: {artifact.id}
   </span>
 
-  <span className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
+  <div className="bg-zinc-950 border border-yellow-700/40 p-6 rounded-2xl shadow-[0_0_30px_rgba(234,179,8,0.08)]">
     Chapters Recorded: {stories?.length || 0}
   </span>
 
@@ -94,7 +94,7 @@ const uniqueLocations = new Set(
       {stories?.map((story, index) => (
         <div
           key={story.id}
-          className="bg-zinc-800 p-4 rounded-lg"
+          className="bg-zinc-950 border border-zinc-800 p-5 rounded-2xl"
         >
           <p className="text-yellow-400 mb-2">
             Chapter {index + 1}
