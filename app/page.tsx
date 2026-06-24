@@ -289,41 +289,40 @@ export default async function Home() {
             </div>
           )}
         </section>
-<footer className="mt-24 border-t border-yellow-700/30 pt-12 pb-6 text-center">
+<footer className="mt-32 pb-16 text-center">
 
-  <div className="max-w-3xl mx-auto">
-
-    <p className="text-yellow-500 uppercase tracking-[0.35em] text-sm mb-6">
-      Until We Meet Again
-    </p>
-
-    <p className="font-serif text-3xl text-white leading-relaxed mb-6">
-      Every relic carries a story.
-      <br />
-      Every traveler leaves a mark.
-    </p>
-
-    <p className="text-zinc-400 leading-loose max-w-2xl mx-auto">
-      Side Stories is a living collection of quests, memories,
-      and unexpected human connections.
-      Somewhere, one of these relics is still traveling.
-      Perhaps the next chapter belongs to you.
-    </p>
-
-    <div className="h-px w-48 bg-yellow-700/40 mx-auto my-10"></div>
-
-    <p className="text-yellow-400 font-serif text-xl">
-      — The Merchant of Mischief
-    </p>
-
-    <p className="text-zinc-600 text-sm mt-8">
-      © {new Date().getFullYear()} Discover Side Stories
-    </p>
-
+  <div className="flex justify-center mb-8">
+    <div className="h-px w-24 bg-yellow-700/40"></div>
+    <div className="mx-6 text-yellow-500 text-xl">✦</div>
+    <div className="h-px w-24 bg-yellow-700/40"></div>
   </div>
 
+  <p className="text-yellow-500 uppercase tracking-[0.45em] text-sm mb-8">
+    Final Entry
+  </p>
+
+  <h2 className="font-serif text-4xl md:text-5xl text-white leading-relaxed max-w-4xl mx-auto mb-10">
+    The story does not end here.
+    <br />
+    It simply waits for its next traveler.
+  </h2>
+
+  <p className="max-w-3xl mx-auto text-zinc-400 text-lg leading-loose mb-12">
+    Somewhere, one of these relics is changing hands.
+    A stranger is completing a quest.
+    A new chapter is being written.
+    <br /><br />
+    Perhaps the next story belongs to you.
+  </p>
+
+  <div className="w-40 h-px bg-yellow-700/30 mx-auto mb-8"></div>
+
+  <p className="font-serif text-2xl text-yellow-400 italic">
+    — The Merchant of Mischief
+  </p>
+
 </footer>
-      </div>
+</div>
     </main>
   )
 }
