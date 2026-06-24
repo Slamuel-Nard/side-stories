@@ -17,6 +17,13 @@ const { data: stories } = await supabase
   .select('*')
   .eq('artifact_id', id)
   .order('created_at', { ascending: true })
+ const chapterCount = stories?.length || 0
+
+const uniqueLocations = new Set(
+  stories
+    ?.map((story) => story.event)
+    .filter(Boolean)
+).size
   if (!artifact) {
     return (
       <main className="min-h-screen bg-black text-white p-6">
@@ -56,6 +63,19 @@ const { data: stories } = await supabase
 
         <div className="bg-zinc-900 p-6 rounded-xl">
           <h2 className="text-xl font-semibold mb-3">
+          <div className="flex gap-3 flex-wrap mt-4">
+  <div className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
+    Chapters: {chapterCount}
+  </div>
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
+    Holders: {chapterCount}
+  </div>
+
+  <div className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2">
+    Locations: {uniqueLocations}
+  </div>
+</div>
             Quest
           </h2>
 
