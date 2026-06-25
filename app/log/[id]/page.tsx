@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
 
 import { ChapterForm } from '@/app/log/[id]/chapter-form'
+import { getArtifactImageUrl } from '@/lib/artifact-display'
 import { getArtifact, getArtifactChapterCount } from '@/lib/data'
 
 export default async function LogPage({
@@ -57,7 +58,7 @@ export default async function LogPage({
           <div className="relative mx-auto mb-10 aspect-[1050/600] max-w-xl">
             <div className="absolute inset-0 rounded-[2rem] bg-yellow-500/20 blur-3xl" />
             <Image
-              src={artifact.image_url}
+              src={getArtifactImageUrl(artifact.image_url)}
               alt={artifact.name}
               fill
               priority

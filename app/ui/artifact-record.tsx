@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import {
   getArtifactImageLayout,
+  getArtifactImageUrl,
   getQrMaskStyle,
 } from '@/lib/artifact-display'
 import type { Database } from '@/lib/supabase/database.types'
@@ -78,7 +79,7 @@ export function ArtifactRecord({
                 }}
               >
                 <Image
-                  src={artifact.image_url}
+                  src={getArtifactImageUrl(artifact.image_url)}
                   alt={artifact.name}
                   fill
                   priority

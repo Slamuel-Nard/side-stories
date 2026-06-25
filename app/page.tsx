@@ -4,6 +4,7 @@ import { connection } from 'next/server'
 
 import {
   getArtifactImageLayout,
+  getArtifactImageUrl,
   getQrMaskStyle,
 } from '@/lib/artifact-display'
 import { getHomeData } from '@/lib/data'
@@ -180,7 +181,7 @@ export default async function Home() {
                           }}
                         >
                           <Image
-                            src={artifact.image_url}
+                            src={getArtifactImageUrl(artifact.image_url)}
                             alt={artifact.name}
                             fill
                             sizes="(min-width: 768px) 30vw, 90vw"
