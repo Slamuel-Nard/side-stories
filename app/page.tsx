@@ -168,6 +168,16 @@ export default async function Home() {
                           sizes="(min-width: 768px) 30vw, 90vw"
                           className="object-contain"
                         />
+                        <div
+                          aria-hidden="true"
+                          className="absolute bottom-[10%] right-[5%] flex aspect-square w-[23%] items-center justify-center rounded-lg border border-yellow-600/70 bg-black text-center shadow-[0_0_18px_rgba(0,0,0,0.9)]"
+                        >
+                          <span className="px-1 text-[8px] font-bold uppercase leading-tight tracking-[0.12em] text-yellow-500 sm:text-[9px]">
+                            Keeper QR
+                            <br />
+                            Hidden
+                          </span>
+                        </div>
                       </div>
                     ) : (
                       <span className="text-5xl text-yellow-400">✦</span>
