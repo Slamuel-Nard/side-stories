@@ -1,6 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import {
+  getArtifactImageLayout,
+  getQrMaskStyle,
+} from '@/lib/artifact-display'
 import type { Database } from '@/lib/supabase/database.types'
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -23,6 +27,7 @@ export function ArtifactRecord({
   stories: Story[]
   keeperAccess: boolean
 }) {
+  const imageLayout = getArtifactImageLayout(artifact.id)
   const travelerCount = new Set(
     stories.map((story) => story.traveler_name).filter(Boolean),
   ).size
@@ -65,26 +70,30 @@ export function ArtifactRecord({
         {artifact.image_url ? (
           <div className="relative mx-auto mb-10 aspect-[1050/600] max-w-2xl">
             <div className="absolute inset-0 rounded-[2rem] bg-yellow-500/20 blur-3xl" />
-            <Image
-              src={artifact.image_url}
-              alt={artifact.name}
-              fill
-              priority
-              sizes="(min-width: 768px) 768px, 90vw"
-              className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_45px_rgba(250,204,21,0.28)]"
-            />
-            {!keeperAccess ? (
+            <div className="flex h-full w-full items-center justify-center">
               <div
-                aria-hidden="true"
-                className="absolute bottom-[12%] right-[7%] flex aspect-square w-[16%] items-center justify-center rounded-lg border border-yellow-600/70 bg-black text-center shadow-[0_0_18px_rgba(0,0,0,0.95)]"
+                className="relative h-full"
+                style={{
+                  aspectRatio: `${imageLayout.width} / ${imageLayout.height}`,
+                }}
               >
-                <span className="px-1 text-[8px] font-bold uppercase leading-tight tracking-[0.1em] text-yellow-500 sm:text-[10px] md:text-xs">
-                  QR
-                  <br />
-                  Hidden
-                </span>
+                <Image
+                  src={artifact.image_url}
+                  alt={artifact.name}
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 768px, 90vw"
+                  className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_45px_rgba(250,204,21,0.28)]"
+                />
+                {!keeperAccess ? (
+                  <div
+                    aria-hidden="true"
+                    style={getQrMaskStyle(artifact.id)}
+                    className="absolute z-10 aspect-square rounded-sm bg-black shadow-[0_0_8px_rgba(0,0,0,0.95)]"
+                  />
+                ) : null}
               </div>
-            ) : null}
+            </div>
           </div>
         ) : null}
 

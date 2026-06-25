@@ -2,6 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { connection } from 'next/server'
 
+import {
+  getArtifactImageLayout,
+  getQrMaskStyle,
+} from '@/lib/artifact-display'
 import { getHomeData } from '@/lib/data'
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -152,7 +156,13 @@ export default async function Home() {
             </p>
           ) : (
             <div className="grid gap-5 md:grid-cols-3">
-              {artifacts.map((artifact) => (
+              {artifacts.map((artifact) => {
+                const imageLayout = getArtifactImageLayout(artifact.id)
+                const imageAspect = imageLayout.width / imageLayout.height
+                const frameAspect = 5 / 3
+                const fitByWidth = imageAspect >= frameAspect
+
+                return (
                 <Link
                   key={artifact.id}
                   href={`/archive/${artifact.id}`}
@@ -160,23 +170,27 @@ export default async function Home() {
                 >
                   <div className="mb-5 aspect-[5/3] overflow-hidden rounded-xl border border-yellow-700/40 bg-black">
                     {artifact.image_url ? (
-                      <div className="relative h-full w-full">
-                        <Image
-                          src={artifact.image_url}
-                          alt={artifact.name}
-                          fill
-                          sizes="(min-width: 768px) 30vw, 90vw"
-                          className="object-contain"
-                        />
+                      <div className="flex h-full w-full items-center justify-center">
                         <div
-                          aria-hidden="true"
-                          className="absolute bottom-[12%] right-[7%] flex aspect-square w-[16%] items-center justify-center rounded-md border border-yellow-600/70 bg-black text-center shadow-[0_0_14px_rgba(0,0,0,0.9)]"
+                          className="relative"
+                          style={{
+                            aspectRatio: `${imageLayout.width} / ${imageLayout.height}`,
+                            width: fitByWidth ? '100%' : 'auto',
+                            height: fitByWidth ? 'auto' : '100%',
+                          }}
                         >
-                          <span className="px-0.5 text-[6px] font-bold uppercase leading-tight tracking-[0.08em] text-yellow-500 sm:text-[7px]">
-                            QR
-                            <br />
-                            Hidden
-                          </span>
+                          <Image
+                            src={artifact.image_url}
+                            alt={artifact.name}
+                            fill
+                            sizes="(min-width: 768px) 30vw, 90vw"
+                            className="object-contain"
+                          />
+                          <div
+                            aria-hidden="true"
+                            style={getQrMaskStyle(artifact.id)}
+                            className="absolute z-10 aspect-square rounded-sm bg-black shadow-[0_0_6px_rgba(0,0,0,0.95)]"
+                          />
                         </div>
                       </div>
                     ) : (
@@ -194,7 +208,8 @@ export default async function Home() {
                     {artifact.quest}
                   </p>
                 </Link>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>
