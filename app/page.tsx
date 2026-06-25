@@ -163,8 +163,8 @@ export default async function Home() {
                       <Image
                         src={artifact.image_url}
                         alt={artifact.name}
-                        width={785}
-                        height={457}
+                        width={1050}
+                        height={600}
                         sizes="(min-width: 768px) 30vw, 90vw"
                         className="max-h-full w-auto object-contain"
                       />

@@ -59,8 +59,8 @@ export default async function LogPage({
             <Image
               src={artifact.image_url}
               alt={artifact.name}
-              width={785}
-              height={457}
+              width={1050}
+              height={600}
               priority
               sizes="(min-width: 768px) 576px, 90vw"
               className="relative h-auto w-full rounded-2xl border border-yellow-700/60 shadow-[0_0_35px_rgba(250,204,21,0.22)]"
