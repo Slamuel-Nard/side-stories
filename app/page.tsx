@@ -170,10 +170,10 @@ export default async function Home() {
                         />
                         <div
                           aria-hidden="true"
-                          className="absolute bottom-[10%] right-[5%] flex aspect-square w-[23%] items-center justify-center rounded-lg border border-yellow-600/70 bg-black text-center shadow-[0_0_18px_rgba(0,0,0,0.9)]"
+                          className="absolute bottom-[12%] right-[7%] flex aspect-square w-[16%] items-center justify-center rounded-md border border-yellow-600/70 bg-black text-center shadow-[0_0_14px_rgba(0,0,0,0.9)]"
                         >
-                          <span className="px-1 text-[8px] font-bold uppercase leading-tight tracking-[0.12em] text-yellow-500 sm:text-[9px]">
-                            Keeper QR
+                          <span className="px-0.5 text-[6px] font-bold uppercase leading-tight tracking-[0.08em] text-yellow-500 sm:text-[7px]">
+                            QR
                             <br />
                             Hidden
                           </span>

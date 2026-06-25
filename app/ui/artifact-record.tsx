@@ -73,6 +73,18 @@ export function ArtifactRecord({
               sizes="(min-width: 768px) 768px, 90vw"
               className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_45px_rgba(250,204,21,0.28)]"
             />
+            {!keeperAccess ? (
+              <div
+                aria-hidden="true"
+                className="absolute bottom-[12%] right-[7%] flex aspect-square w-[16%] items-center justify-center rounded-lg border border-yellow-600/70 bg-black text-center shadow-[0_0_18px_rgba(0,0,0,0.95)]"
+              >
+                <span className="px-1 text-[8px] font-bold uppercase leading-tight tracking-[0.1em] text-yellow-500 sm:text-[10px] md:text-xs">
+                  QR
+                  <br />
+                  Hidden
+                </span>
+              </div>
+            ) : null}
           </div>
         ) : null}
 

@@ -14,6 +14,7 @@ test('homepage opens a public artifact history without keeper controls', async (
   await expect(page).toHaveURL(/\/archive\//)
   await expect(page.getByText('Artifact ID')).toBeVisible()
   await expect(page.getByText(/only the current keeper/i)).toBeVisible()
+  await expect(page.getByText('QR Hidden')).toBeVisible()
   await expect(
     page.getByRole('link', { name: 'Seal Your Chapter' }),
   ).toHaveCount(0)
@@ -30,6 +31,7 @@ test('printed QR artifact pages retain keeper chapter access', async ({
   page,
 }) => {
   await page.goto(`/artifact/${artifactId}`)
+  await expect(page.getByText('QR Hidden')).toHaveCount(0)
   await expect(
     page.getByRole('link', { name: 'Seal Your Chapter' }),
   ).toBeVisible()
