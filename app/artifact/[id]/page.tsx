@@ -183,8 +183,76 @@ const uniqueLocations = new Set(
 </section>
 
 <section className="max-w-4xl mx-auto rounded-2xl border border-yellow-700/40 bg-black/40 p-8 shadow-[0_0_35px_rgba(250,204,21,0.10)]">
-  <h2 className="font-serif text-3xl text-yellow-400 uppercase tracking-[0.25em] mb-3">
-    Traveler History
+  <p className="text-yellow-400 uppercase tracking-[0.35em] text-sm mb-4">
+    Journey Summary
+  </p>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+    <div className="rounded-2xl border border-yellow-700/30 bg-black/40 p-5 text-center">
+      <p className="font-serif text-4xl text-yellow-400">
+        {stories?.length || 0}
+      </p>
+      <p className="text-zinc-500 uppercase tracking-[0.2em] text-xs mt-2">
+        Chapters
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-yellow-700/30 bg-black/40 p-5 text-center">
+      <p className="font-serif text-4xl text-yellow-400">
+        {
+          new Set(
+            stories
+              ?.map((story) => story.traveler_name)
+              .filter(Boolean)
+          ).size || 0
+        }
+      </p>
+      <p className="text-zinc-500 uppercase tracking-[0.2em] text-xs mt-2">
+        Travelers
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-yellow-700/30 bg-black/40 p-5 text-center">
+      <p className="font-serif text-4xl text-yellow-400">
+        {
+          new Set(
+            stories
+              ?.map((story) => story.event)
+              .filter(Boolean)
+          ).size || 0
+        }
+      </p>
+      <p className="text-zinc-500 uppercase tracking-[0.2em] text-xs mt-2">
+        Places
+      </p>
+    </div>
+  </div>
+
+  <div className="mb-10 rounded-2xl border border-yellow-700/30 bg-zinc-950/80 p-6">
+    <p className="text-yellow-400 uppercase tracking-[0.3em] text-sm mb-4">
+      Current Path
+    </p>
+
+    {stories?.length === 0 ? (
+      <p className="text-zinc-400">
+        This relic has not begun its journey yet.
+      </p>
+    ) : (
+      <p className="text-zinc-300 text-lg leading-relaxed">
+        Origin
+        {stories?.map((story) => (
+          <span key={story.id}>
+            {' '}
+            <span className="text-yellow-500">→</span>{' '}
+            {story.event || 'Unknown'}
+          </span>
+        ))}
+      </p>
+    )}
+  </div>
+
+  <h2 className="font-serif text-4xl text-yellow-400 uppercase tracking-[0.25em] mb-3">
+    The Chronicle
   </h2>
 
   <div className="h-px w-72 bg-yellow-700/60 mb-8" />
@@ -192,9 +260,9 @@ const uniqueLocations = new Set(
   {stories?.length === 0 ? (
     <p className="text-zinc-400">No chapters have been recorded yet.</p>
   ) : (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {stories?.map((story, index) => (
-        <div
+        <article
           key={story.id}
           className="relative overflow-hidden rounded-2xl border border-yellow-700/40 bg-zinc-950/80 p-8 shadow-inner"
         >
@@ -202,23 +270,43 @@ const uniqueLocations = new Set(
             ✦
           </div>
 
-          <p className="text-yellow-400 text-lg mb-4">
+          <p className="text-yellow-400 uppercase tracking-[0.3em] text-sm mb-4">
             Chapter {index + 1}
           </p>
 
-          <p className="font-serif text-3xl text-white mb-2">
+          <h3 className="font-serif text-3xl md:text-4xl text-white mb-3">
             {story.traveler_name || 'Anonymous Traveler'}
-          </p>
+          </h3>
 
           <p className="text-zinc-500 mb-6">
-            {story.event} <span className="mx-2">•</span>
+            {story.event || 'Unknown Location'} <span className="mx-2">•</span>
             {new Date(story.created_at).toLocaleDateString()}
           </p>
 
           <p className="text-zinc-300 text-lg leading-relaxed">
             {story.story}
           </p>
-        </div>
+
+          {story.next_destination && (
+            <div className="mt-6 border-t border-yellow-700/20 pt-4">
+              <p className="text-xs uppercase tracking-[0.25em] text-yellow-500 mb-2">
+                Hoped Next Destination
+              </p>
+              <p className="text-zinc-300">{story.next_destination}</p>
+            </div>
+          )}
+
+          {story.message_to_future_holders && (
+            <div className="mt-6 border-t border-yellow-700/20 pt-4">
+              <p className="text-xs uppercase tracking-[0.25em] text-yellow-500 mb-2">
+                Message to Future Holders
+              </p>
+              <p className="italic text-zinc-300">
+                “{story.message_to_future_holders}”
+              </p>
+            </div>
+          )}
+        </article>
       ))}
     </div>
   )}
@@ -227,7 +315,7 @@ const uniqueLocations = new Set(
     href={`/log/${artifact.id}`}
     className="group mt-8 flex items-center justify-between rounded-xl border border-yellow-600/70 bg-yellow-500 px-6 py-4 text-black font-bold text-xl tracking-wide shadow-[0_0_25px_rgba(250,204,21,0.25)] hover:bg-yellow-400 transition"
   >
-    <span>Add Your Chapter</span>
+    <span>Seal Your Chapter</span>
     <span className="text-2xl group-hover:translate-x-1 transition">✦</span>
   </a>
 </section>
