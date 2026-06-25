@@ -54,16 +54,15 @@ export default async function LogPage({
         </header>
 
         {artifact.image_url ? (
-          <div className="relative mx-auto mb-10 max-w-xl">
+          <div className="relative mx-auto mb-10 aspect-[1050/600] max-w-xl">
             <div className="absolute inset-0 rounded-[2rem] bg-yellow-500/20 blur-3xl" />
             <Image
               src={artifact.image_url}
               alt={artifact.name}
-              width={1050}
-              height={600}
+              fill
               priority
               sizes="(min-width: 768px) 576px, 90vw"
-              className="relative h-auto w-full rounded-2xl border border-yellow-700/60 shadow-[0_0_35px_rgba(250,204,21,0.22)]"
+              className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_35px_rgba(250,204,21,0.22)]"
             />
           </div>
         ) : null}

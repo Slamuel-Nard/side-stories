@@ -158,16 +158,17 @@ export default async function Home() {
                   href={`/artifact/${artifact.id}`}
                   className="group rounded-2xl border border-yellow-700/30 bg-black/50 p-5 text-left transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)]"
                 >
-                  <div className="mb-5 flex h-48 items-center justify-center rounded-xl border border-yellow-700/40 bg-black p-4">
+                  <div className="mb-5 aspect-[5/3] overflow-hidden rounded-xl border border-yellow-700/40 bg-black">
                     {artifact.image_url ? (
-                      <Image
-                        src={artifact.image_url}
-                        alt={artifact.name}
-                        width={1050}
-                        height={600}
-                        sizes="(min-width: 768px) 30vw, 90vw"
-                        className="max-h-full w-auto object-contain"
-                      />
+                      <div className="relative h-full w-full">
+                        <Image
+                          src={artifact.image_url}
+                          alt={artifact.name}
+                          fill
+                          sizes="(min-width: 768px) 30vw, 90vw"
+                          className="object-contain"
+                        />
+                      </div>
                     ) : (
                       <span className="text-5xl text-yellow-400">✦</span>
                     )}
