@@ -4,7 +4,7 @@ import { connection } from 'next/server'
 import { ArtifactRecord } from '@/app/ui/artifact-record'
 import { getArtifact, getArtifactStories } from '@/lib/data'
 
-export default async function ArtifactPage({
+export default async function ArchiveArtifactPage({
   params,
 }: {
   params: Promise<{ id: string }>
@@ -22,7 +22,7 @@ export default async function ArtifactPage({
     <ArtifactRecord
       artifact={artifact}
       stories={stories}
-      keeperAccess
+      keeperAccess={false}
     />
   )
 }

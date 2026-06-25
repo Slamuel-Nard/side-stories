@@ -46,7 +46,7 @@ export default async function Home() {
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             {featuredArtifact ? (
               <Link
-                href={`/artifact/${featuredArtifact.id}`}
+                href={`/archive/${featuredArtifact.id}`}
                 className="rounded-xl bg-yellow-500 px-8 py-4 text-lg font-bold text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition hover:bg-yellow-400"
               >
                 Discover An Artifact
@@ -155,7 +155,7 @@ export default async function Home() {
               {artifacts.map((artifact) => (
                 <Link
                   key={artifact.id}
-                  href={`/artifact/${artifact.id}`}
+                  href={`/archive/${artifact.id}`}
                   className="group rounded-2xl border border-yellow-700/30 bg-black/50 p-5 text-left transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)]"
                 >
                   <div className="mb-5 aspect-[5/3] overflow-hidden rounded-xl border border-yellow-700/40 bg-black">
@@ -204,7 +204,7 @@ export default async function Home() {
               {recentStories.map((story) => (
                 <Link
                   key={story.id}
-                  href={`/artifact/${story.artifact_id}`}
+                  href={`/archive/${story.artifact_id}`}
                   className="block rounded-2xl border border-yellow-700/30 bg-black/50 p-6 transition hover:border-yellow-400"
                 >
                   <p className="mb-2 text-yellow-400">{story.artifact_id}</p>

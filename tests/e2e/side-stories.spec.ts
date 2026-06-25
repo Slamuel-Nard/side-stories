@@ -2,21 +2,36 @@ import { expect, test } from '@playwright/test'
 
 const artifactId = process.env.E2E_ARTIFACT_ID ?? 'M-0001'
 
-test('homepage opens a database-backed artifact', async ({ page }) => {
+test('homepage opens a public artifact history without keeper controls', async ({
+  page,
+}) => {
   await page.goto('/')
   await expect(
     page.getByRole('heading', { name: /artifacts travel/i }),
   ).toBeVisible()
 
   await page.locator('#relics a').first().click()
-  await expect(page).toHaveURL(/\/artifact\//)
+  await expect(page).toHaveURL(/\/archive\//)
   await expect(page.getByText('Artifact ID')).toBeVisible()
+  await expect(page.getByText(/only the current keeper/i)).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Seal Your Chapter' }),
+  ).toHaveCount(0)
 })
 
 test('unknown artifacts render the branded not-found page', async ({ page }) => {
-  await page.goto('/artifact/DOES-NOT-EXIST')
+  await page.goto('/archive/DOES-NOT-EXIST')
   await expect(
     page.getByRole('heading', { name: /not in the archive/i }),
+  ).toBeVisible()
+})
+
+test('printed QR artifact pages retain keeper chapter access', async ({
+  page,
+}) => {
+  await page.goto(`/artifact/${artifactId}`)
+  await expect(
+    page.getByRole('link', { name: 'Seal Your Chapter' }),
   ).toBeVisible()
 })
 
