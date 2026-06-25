@@ -116,6 +116,49 @@ const uniqueLocations = new Set(
   <span className="text-yellow-400 mr-3">✦</span>
   If this artifact has reached you, its story is now partially yours.
 </p>
+<section className="max-w-4xl mx-auto mb-8 rounded-2xl border border-yellow-700/40 bg-black/40 p-8 shadow-[0_0_35px_rgba(250,204,21,0.10)]">
+  <p className="text-yellow-400 uppercase tracking-[0.3em] text-sm mb-4">
+    Artifact Journey
+  </p>
+
+  <h2 className="font-serif text-3xl text-white mb-6">
+    Path of the Relic
+  </h2>
+
+  {stories?.length === 0 ? (
+    <p className="text-zinc-400">This relic has not begun its journey yet.</p>
+  ) : (
+    <div className="space-y-5">
+      {stories?.map((story, index) => (
+        <div key={story.id} className="flex gap-4">
+          <div className="flex flex-col items-center">
+            <div className="h-8 w-8 rounded-full border border-yellow-500 bg-black text-yellow-400 flex items-center justify-center text-sm">
+              ✦
+            </div>
+
+            {index !== stories.length - 1 && (
+              <div className="w-px flex-1 bg-yellow-700/40 mt-2" />
+            )}
+          </div>
+
+          <div className="pb-6">
+            <p className="text-yellow-400 uppercase tracking-[0.25em] text-xs mb-1">
+              Chapter {index + 1}
+            </p>
+
+            <p className="font-serif text-2xl text-white">
+              {story.event || 'Unknown Location'}
+            </p>
+
+            <p className="text-zinc-500 text-sm mt-1">
+              {new Date(story.created_at).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
 
 <section className="max-w-4xl mx-auto mb-8 rounded-2xl border border-yellow-700/40 bg-black/40 overflow-hidden shadow-[0_0_35px_rgba(250,204,21,0.10)]">
   <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
