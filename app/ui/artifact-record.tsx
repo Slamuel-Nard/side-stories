@@ -6,6 +6,7 @@ import {
   getArtifactImageUrl,
   getQrMaskStyle,
 } from '@/lib/artifact-display'
+import { countUniqueLocations } from '@/lib/location'
 import type { Database } from '@/lib/supabase/database.types'
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -32,9 +33,9 @@ export function ArtifactRecord({
   const travelerCount = new Set(
     stories.map((story) => story.traveler_name).filter(Boolean),
   ).size
-  const locationCount = new Set(
-    stories.map((story) => story.event).filter(Boolean),
-  ).size
+  const locationCount = countUniqueLocations(
+    stories.map((story) => story.event),
+  )
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-yellow-950 via-black to-black p-6 text-white">

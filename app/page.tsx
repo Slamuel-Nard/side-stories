@@ -8,6 +8,7 @@ import {
   getQrMaskStyle,
 } from '@/lib/artifact-display'
 import { getHomeData } from '@/lib/data'
+import { countUniqueLocations } from '@/lib/location'
 import { DiscoverArtifactButton } from '@/app/ui/discover-artifact-button'
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -23,9 +24,9 @@ export default async function Home() {
   const travelerCount = new Set(
     stories.map((story) => story.traveler_name).filter(Boolean),
   ).size
-  const locationCount = new Set(
-    stories.map((story) => story.event).filter(Boolean),
-  ).size
+  const locationCount = countUniqueLocations(
+    stories.map((story) => story.event),
+  )
   const recentStories = stories.slice(0, 3)
 
   return (
