@@ -8,6 +8,7 @@ import {
   getQrMaskStyle,
 } from '@/lib/artifact-display'
 import { getHomeData } from '@/lib/data'
+import { DiscoverArtifactButton } from '@/app/ui/discover-artifact-button'
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'medium',
@@ -19,8 +20,6 @@ export default async function Home() {
 
   const { artifacts, stories } = await getHomeData()
   const chapterCount = stories.length
-  const featuredArtifact =
-    artifacts.length > 0 ? artifacts[chapterCount % artifacts.length] : null
   const travelerCount = new Set(
     stories.map((story) => story.traveler_name).filter(Boolean),
   ).size
@@ -49,13 +48,10 @@ export default async function Home() {
           </p>
 
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            {featuredArtifact ? (
-              <Link
-                href={`/archive/${featuredArtifact.id}`}
-                className="rounded-xl bg-yellow-500 px-8 py-4 text-lg font-bold text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition hover:bg-yellow-400"
-              >
-                Discover An Artifact
-              </Link>
+            {artifacts.length > 0 ? (
+              <DiscoverArtifactButton
+                artifactIds={artifacts.map((artifact) => artifact.id)}
+              />
             ) : null}
 
             <a
