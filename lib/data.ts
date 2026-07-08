@@ -168,21 +168,37 @@ export async function submitStory(
 export async function submitAlphaStory(
   submission: StorySubmission,
 ): Promise<StorySubmissionResult> {
-  const { data, error } = await getSupabaseAdminClient().rpc(
-    'submit_alpha_story',
-    {
-      p_artifact_id: submission.artifactId,
-      p_event: submission.event,
-      p_fingerprint: submission.fingerprint,
-      p_instagram_handle: submission.instagramHandle,
-      p_message_to_future_holders: submission.messageToFutureHolders,
-      p_next_destination: submission.nextDestination,
-      p_story: submission.story,
-      p_traveler_name: submission.travelerName,
-    },
-  )
+  const supabase = getSupabaseAdminClient()
+  const { data, error } = await supabase.rpc('submit_alpha_story', {
+    p_artifact_id: submission.artifactId,
+    p_event: submission.event,
+    p_fingerprint: submission.fingerprint,
+    p_instagram_handle: submission.instagramHandle,
+    p_message_to_future_holders: submission.messageToFutureHolders,
+    p_next_destination: submission.nextDestination,
+    p_story: submission.story,
+    p_traveler_name: submission.travelerName,
+  })
 
-  if (error) fail('submit alpha chapter', error)
+  if (error) {
+    console.error(
+      'Supabase submit alpha chapter RPC failed; trying direct alpha insert',
+      error,
+    )
+
+    const { error: insertError } = await supabase.from('alpha_stories').insert({
+      artifact_id: submission.artifactId,
+      event: submission.event,
+      instagram_handle: submission.instagramHandle,
+      message_to_future_holders: submission.messageToFutureHolders,
+      next_destination: submission.nextDestination,
+      story: submission.story,
+      traveler_name: submission.travelerName,
+    })
+
+    if (insertError) fail('submit alpha chapter', insertError)
+    return 'accepted'
+  }
 
   if (
     data !== 'accepted' &&
