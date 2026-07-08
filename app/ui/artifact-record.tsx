@@ -15,6 +15,8 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 })
 
+const chapterAnchor = (index: number) => `chapter-${index + 1}`
+
 type Artifact = Pick<
   Database['public']['Tables']['artifacts']['Row'],
   'display_order' | 'id' | 'image_url' | 'name' | 'quest' | 'relic_title'
@@ -185,29 +187,29 @@ export function ArtifactRecord({
               This relic has not begun its journey yet.
             </p>
           ) : (
-            <div className="space-y-5">
+            <div className="flex snap-x gap-4 overflow-x-auto pb-4">
               {stories.map((story, index) => (
-                <div key={story.id} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-yellow-500 bg-black text-sm text-yellow-400">
-                      ✦
-                    </div>
-                    {index !== stories.length - 1 ? (
-                      <div className="mt-2 w-px flex-1 bg-yellow-700/40" />
-                    ) : null}
+                <Link
+                  key={story.id}
+                  href={`#${chapterAnchor(index)}`}
+                  className="group min-w-56 snap-start rounded-2xl border border-yellow-700/30 bg-zinc-950/80 p-5 transition hover:border-yellow-400"
+                >
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-yellow-500 bg-black text-sm text-yellow-400">
+                      {index + 1}
+                    </span>
+                    <span className="h-px flex-1 bg-yellow-700/40 transition group-hover:bg-yellow-400/70" />
                   </div>
-                  <div className="pb-6">
-                    <p className="mb-1 text-xs uppercase tracking-[0.25em] text-yellow-400">
-                      Chapter {index + 1}
-                    </p>
-                    <p className="font-serif text-2xl text-white">
-                      {story.event || 'Unknown Location'}
-                    </p>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {dateFormatter.format(new Date(story.created_at))}
-                    </p>
-                  </div>
-                </div>
+                  <p className="mb-1 text-xs uppercase tracking-[0.25em] text-yellow-400">
+                    Chapter {index + 1}
+                  </p>
+                  <p className="line-clamp-2 font-serif text-2xl text-white">
+                    {story.event || 'Unknown Location'}
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-500">
+                    {dateFormatter.format(new Date(story.created_at))}
+                  </p>
+                </Link>
               ))}
             </div>
           )}
@@ -263,7 +265,7 @@ export function ArtifactRecord({
                 This relic has not begun its journey yet.
               </p>
             ) : (
-              <p className="text-lg leading-relaxed text-zinc-300">
+              <p className="max-h-36 overflow-y-auto pr-2 text-lg leading-relaxed text-zinc-300">
                 Origin
                 {stories.map((story) => (
                   <span key={story.id}>
@@ -284,70 +286,90 @@ export function ArtifactRecord({
           {stories.length === 0 ? (
             <p className="text-zinc-400">{emptyText}</p>
           ) : (
-            <div className="space-y-8">
-              {stories.map((story, index) => (
-                <article
-                  key={story.id}
-                  className="relative overflow-hidden rounded-2xl border border-yellow-700/40 bg-zinc-950/80 p-6 shadow-inner md:p-8"
-                >
-                  <div className="absolute right-8 top-8 text-8xl text-yellow-900/20">
-                    ✦
-                  </div>
-                  <p className="mb-4 text-sm uppercase tracking-[0.3em] text-yellow-400">
-                    Chapter {index + 1}
-                  </p>
-                  <h3 className="mb-3 font-serif text-3xl text-white md:text-4xl">
-                    {story.traveler_name || 'Anonymous Traveler'}
-                  </h3>
-                  <p className="mb-6 text-zinc-500">
-                    {story.event || 'Unknown Location'}{' '}
-                    <span className="mx-2">•</span>
-                    {dateFormatter.format(new Date(story.created_at))}
-                  </p>
-                  <p className="whitespace-pre-wrap text-lg leading-relaxed text-zinc-300">
-                    {story.story}
-                  </p>
+            <>
+              <div className="mb-6 rounded-2xl border border-yellow-700/30 bg-zinc-950/80 p-4">
+                <p className="mb-3 text-xs uppercase tracking-[0.25em] text-yellow-500">
+                  Jump to Chapter
+                </p>
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {stories.map((story, index) => (
+                    <Link
+                      key={story.id}
+                      href={`#${chapterAnchor(index)}`}
+                      className="flex h-10 min-w-10 items-center justify-center rounded-full border border-yellow-700/60 bg-black px-3 text-sm font-bold text-yellow-400 transition hover:border-yellow-400 hover:bg-yellow-500 hover:text-black"
+                    >
+                      {index + 1}
+                    </Link>
+                  ))}
+                </div>
+              </div>
 
-                  {story.instagram_handle ? (
-                    <div className="mt-6 border-t border-yellow-700/20 pt-4">
-                      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-500">
-                        Find This Traveler
-                      </p>
-                      <a
-                        href={`https://www.instagram.com/${story.instagram_handle}/`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-zinc-300 underline decoration-yellow-700 underline-offset-4 hover:text-yellow-400"
-                      >
-                        @{story.instagram_handle}
-                      </a>
+              <div className="max-h-[48rem] space-y-8 overflow-y-auto overscroll-contain pr-2">
+                {stories.map((story, index) => (
+                  <article
+                    id={chapterAnchor(index)}
+                    key={story.id}
+                    className="relative scroll-mt-8 overflow-hidden rounded-2xl border border-yellow-700/40 bg-zinc-950/80 p-6 shadow-inner md:p-8"
+                  >
+                    <div className="absolute right-8 top-8 text-8xl text-yellow-900/20">
+                      ✦
                     </div>
-                  ) : null}
+                    <p className="mb-4 text-sm uppercase tracking-[0.3em] text-yellow-400">
+                      Chapter {index + 1}
+                    </p>
+                    <h3 className="mb-3 font-serif text-3xl text-white md:text-4xl">
+                      {story.traveler_name || 'Anonymous Traveler'}
+                    </h3>
+                    <p className="mb-6 text-zinc-500">
+                      {story.event || 'Unknown Location'}{' '}
+                      <span className="mx-2">•</span>
+                      {dateFormatter.format(new Date(story.created_at))}
+                    </p>
+                    <p className="whitespace-pre-wrap text-lg leading-relaxed text-zinc-300">
+                      {story.story}
+                    </p>
 
-                  {story.next_destination ? (
-                    <div className="mt-6 border-t border-yellow-700/20 pt-4">
-                      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-500">
-                        Hoped Next Destination
-                      </p>
-                      <p className="text-zinc-300">
-                        {story.next_destination}
-                      </p>
-                    </div>
-                  ) : null}
+                    {story.instagram_handle ? (
+                      <div className="mt-6 border-t border-yellow-700/20 pt-4">
+                        <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-500">
+                          Find This Traveler
+                        </p>
+                        <a
+                          href={`https://www.instagram.com/${story.instagram_handle}/`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-zinc-300 underline decoration-yellow-700 underline-offset-4 hover:text-yellow-400"
+                        >
+                          @{story.instagram_handle}
+                        </a>
+                      </div>
+                    ) : null}
 
-                  {story.message_to_future_holders ? (
-                    <div className="mt-6 border-t border-yellow-700/20 pt-4">
-                      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-500">
-                        Message to Future Holders
-                      </p>
-                      <p className="whitespace-pre-wrap italic text-zinc-300">
-                        “{story.message_to_future_holders}”
-                      </p>
-                    </div>
-                  ) : null}
-                </article>
-              ))}
-            </div>
+                    {story.next_destination ? (
+                      <div className="mt-6 border-t border-yellow-700/20 pt-4">
+                        <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-500">
+                          Hoped Next Destination
+                        </p>
+                        <p className="text-zinc-300">
+                          {story.next_destination}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {story.message_to_future_holders ? (
+                      <div className="mt-6 border-t border-yellow-700/20 pt-4">
+                        <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-500">
+                          Message to Future Holders
+                        </p>
+                        <p className="whitespace-pre-wrap italic text-zinc-300">
+                          “{story.message_to_future_holders}”
+                        </p>
+                      </div>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            </>
           )}
 
           {keeperAccess ? (
