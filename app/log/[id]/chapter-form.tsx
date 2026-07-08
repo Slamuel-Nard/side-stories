@@ -1,5 +1,6 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { useActionState } from 'react'
 
 import { createChapter } from '@/app/log/actions'
@@ -8,6 +9,11 @@ import {
   type ChapterActionState,
 } from '@/lib/chapter-submission'
 import type { ChapterFieldName } from '@/lib/chapter-validation'
+
+export type ChapterFormAction = (
+  previousState: ChapterActionState,
+  formData: FormData,
+) => Promise<ChapterActionState>
 
 const fieldClassName =
   'w-full rounded-xl border border-yellow-700/40 bg-black/50 p-4 text-white placeholder:text-zinc-500 focus:border-yellow-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60'
@@ -29,11 +35,26 @@ function FieldError({
   )
 }
 
-export function ChapterForm({ artifactId }: { artifactId: string }) {
-  const [state, formAction, pending] = useActionState(
-    createChapter,
-    initialChapterState,
-  )
+export function ChapterForm({
+  action = createChapter,
+  artifactId,
+  buttonLabel = '✦ Seal This Chapter',
+  notice = (
+    <>
+      ✦ This chapter becomes public immediately and remains part of the
+      artifact&apos;s record. Future travelers may read your words long after
+      tonight.
+    </>
+  ),
+  pendingLabel = 'Sealing Chapter…',
+}: {
+  action?: ChapterFormAction
+  artifactId: string
+  buttonLabel?: string
+  notice?: ReactNode
+  pendingLabel?: string
+}) {
+  const [state, formAction, pending] = useActionState(action, initialChapterState)
 
   const describedBy = (field: ChapterFieldName) =>
     state.fieldErrors?.[field]?.length ? `${field}-error` : undefined
@@ -190,11 +211,7 @@ export function ChapterForm({ artifactId }: { artifactId: string }) {
       </div>
 
       <div className="rounded-2xl border border-yellow-700/30 bg-black/40 p-5">
-        <p className="leading-relaxed text-zinc-400">
-          ✦ This chapter becomes public immediately and remains part of the
-          artifact&apos;s record. Future travelers may read your words long
-          after tonight.
-        </p>
+        <p className="leading-relaxed text-zinc-400">{notice}</p>
       </div>
 
       {state.message ? (
@@ -212,7 +229,7 @@ export function ChapterForm({ artifactId }: { artifactId: string }) {
         disabled={pending}
         className="w-full rounded-xl bg-yellow-500 py-5 text-xl font-bold tracking-wide text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition hover:bg-yellow-400 disabled:cursor-wait disabled:bg-yellow-700"
       >
-        {pending ? 'Sealing Chapter…' : '✦ Seal This Chapter'}
+        {pending ? pendingLabel : buttonLabel}
       </button>
     </form>
   )

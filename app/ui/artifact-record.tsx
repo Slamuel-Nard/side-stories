@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -18,16 +19,55 @@ type Artifact = Pick<
   Database['public']['Tables']['artifacts']['Row'],
   'display_order' | 'id' | 'image_url' | 'name' | 'quest' | 'relic_title'
 >
-type Story = Database['public']['Tables']['stories']['Row']
+type Story = Pick<
+  Database['public']['Tables']['stories']['Row'],
+  | 'created_at'
+  | 'event'
+  | 'id'
+  | 'instagram_handle'
+  | 'message_to_future_holders'
+  | 'next_destination'
+  | 'story'
+  | 'traveler_name'
+>
 
 export function ArtifactRecord({
+  actionHref,
+  actionLabel = 'Seal Your Chapter',
   artifact,
+  backHref = '/',
+  backLabel = '✦ Archive',
+  chronicleTitle = 'The Chronicle',
+  emptyText = 'No chapters have been recorded yet.',
+  journeyLabel = 'Artifact Journey',
   stories,
+  status = 'Active',
+  subtitle = 'Legendary Artifact',
+  summaryTitle = 'Journey Summary',
   keeperAccess,
+  keeperAccessCopy = (
+    <>
+      Only the current keeper of this artifact may continue its story. Scan the
+      QR code printed on the physical card to add the next chapter.
+    </>
+  ),
+  qrMasked = !keeperAccess,
 }: {
+  actionHref?: string
+  actionLabel?: string
   artifact: Artifact
+  backHref?: string
+  backLabel?: string
+  chronicleTitle?: string
+  emptyText?: string
+  journeyLabel?: string
   stories: Story[]
+  status?: string
+  subtitle?: string
+  summaryTitle?: string
   keeperAccess: boolean
+  keeperAccessCopy?: ReactNode
+  qrMasked?: boolean
 }) {
   const imageLayout = getArtifactImageLayout(artifact.id)
   const travelerCount = new Set(
@@ -41,10 +81,10 @@ export function ArtifactRecord({
     <main className="min-h-screen bg-gradient-to-b from-yellow-950 via-black to-black p-6 text-white">
       <nav className="mx-auto mb-6 max-w-4xl">
         <Link
-          href="/"
+          href={backHref}
           className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.25em] text-yellow-500 transition hover:text-yellow-300"
         >
-          ✦ Archive
+          {backLabel}
         </Link>
         <span className="mx-3 text-yellow-700">/</span>
         <span className="text-sm uppercase tracking-[0.25em] text-zinc-400">
@@ -56,7 +96,7 @@ export function ArtifactRecord({
         <header className="mb-10 text-center">
           <div className="mb-4 flex items-center justify-center gap-4 text-sm uppercase tracking-[0.35em] text-yellow-500">
             <span className="h-px w-24 bg-yellow-700/50" />
-            Legendary Artifact
+            {subtitle}
             <span className="h-px w-24 bg-yellow-700/50" />
           </div>
           <h1 className="font-serif text-5xl font-bold text-yellow-400 drop-shadow-[0_0_18px_rgba(250,204,21,0.35)] md:text-7xl">
@@ -87,7 +127,7 @@ export function ArtifactRecord({
                   sizes="(min-width: 768px) 768px, 90vw"
                   className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_45px_rgba(250,204,21,0.28)]"
                 />
-                {!keeperAccess ? (
+                {qrMasked ? (
                   <div
                     aria-hidden="true"
                     style={getQrMaskStyle(artifact.id)}
@@ -104,7 +144,7 @@ export function ArtifactRecord({
             {[
               ['Artifact ID', artifact.id],
               ['Chapters Recorded', stories.length],
-              ['Status', 'Active'],
+              ['Status', status],
             ].map(([label, value]) => (
               <div key={label} className="p-6 text-center">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-700">
@@ -127,16 +167,14 @@ export function ArtifactRecord({
               Keeper Access
             </p>
             <p className="text-lg leading-relaxed text-zinc-300">
-              Only the current keeper of this artifact may continue its story.
-              Scan the QR code printed on the physical card to add the next
-              chapter.
+              {keeperAccessCopy}
             </p>
           </div>
         )}
 
         <section className="mb-8 rounded-2xl border border-yellow-700/40 bg-black/40 p-8 shadow-[0_0_35px_rgba(250,204,21,0.10)]">
           <p className="mb-4 text-sm uppercase tracking-[0.3em] text-yellow-400">
-            Artifact Journey
+            {journeyLabel}
           </p>
           <h2 className="mb-6 font-serif text-3xl text-white">
             Path of the Relic
@@ -196,7 +234,7 @@ export function ArtifactRecord({
 
         <section className="rounded-2xl border border-yellow-700/40 bg-black/40 p-6 shadow-[0_0_35px_rgba(250,204,21,0.10)] md:p-8">
           <p className="mb-4 text-sm uppercase tracking-[0.35em] text-yellow-400">
-            Journey Summary
+            {summaryTitle}
           </p>
           <div className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
             {[
@@ -239,14 +277,12 @@ export function ArtifactRecord({
           </div>
 
           <h2 className="mb-3 font-serif text-4xl uppercase tracking-[0.2em] text-yellow-400">
-            The Chronicle
+            {chronicleTitle}
           </h2>
           <div className="mb-8 h-px w-64 max-w-full bg-yellow-700/60" />
 
           {stories.length === 0 ? (
-            <p className="text-zinc-400">
-              No chapters have been recorded yet.
-            </p>
+            <p className="text-zinc-400">{emptyText}</p>
           ) : (
             <div className="space-y-8">
               {stories.map((story, index) => (
@@ -316,10 +352,10 @@ export function ArtifactRecord({
 
           {keeperAccess ? (
             <Link
-              href={`/log/${artifact.id}`}
+              href={actionHref ?? `/log/${artifact.id}`}
               className="group mt-8 flex items-center justify-between rounded-xl border border-yellow-600/70 bg-yellow-500 px-6 py-4 text-xl font-bold tracking-wide text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition hover:bg-yellow-400"
             >
-              <span>Seal Your Chapter</span>
+              <span>{actionLabel}</span>
               <span className="text-2xl transition group-hover:translate-x-1">
                 ✦
               </span>

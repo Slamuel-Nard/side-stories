@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { ALPHA_ARTIFACT_IDS, isAlphaArtifactId } from '@/lib/alpha'
 import { getSupabaseAdminClient, getSupabaseReadClient } from '@/lib/supabase/server'
 
 const ARTIFACT_FIELDS =
@@ -42,6 +43,22 @@ export async function getArtifact(id: string) {
   return data
 }
 
+export async function getAlphaArtifacts() {
+  const { data, error } = await getSupabaseReadClient()
+    .from('artifacts')
+    .select(ARTIFACT_FIELDS)
+    .in('id', [...ALPHA_ARTIFACT_IDS])
+    .order('display_order', { ascending: true })
+
+  if (error) fail('load alpha artifacts', error)
+  return data
+}
+
+export async function getAlphaArtifact(id: string) {
+  if (!isAlphaArtifactId(id)) return null
+  return getArtifact(id)
+}
+
 export async function getArtifactStories(artifactId: string) {
   const { data, error } = await getSupabaseReadClient()
     .from('stories')
@@ -53,6 +70,17 @@ export async function getArtifactStories(artifactId: string) {
   return data
 }
 
+export async function getAlphaArtifactStories(artifactId: string) {
+  const { data, error } = await getSupabaseReadClient()
+    .from('alpha_stories')
+    .select(STORY_FIELDS)
+    .eq('artifact_id', artifactId)
+    .order('created_at', { ascending: true })
+
+  if (error) fail('load alpha chapters', error)
+  return data
+}
+
 export async function getArtifactChapterCount(artifactId: string) {
   const { count, error } = await getSupabaseReadClient()
     .from('stories')
@@ -60,6 +88,16 @@ export async function getArtifactChapterCount(artifactId: string) {
     .eq('artifact_id', artifactId)
 
   if (error) fail('count artifact chapters', error)
+  return count ?? 0
+}
+
+export async function getAlphaArtifactChapterCount(artifactId: string) {
+  const { count, error } = await getSupabaseReadClient()
+    .from('alpha_stories')
+    .select('id', { count: 'exact', head: true })
+    .eq('artifact_id', artifactId)
+
+  if (error) fail('count alpha chapters', error)
   return count ?? 0
 }
 
@@ -122,6 +160,39 @@ export async function submitStory(
     data !== 'rate_limited'
   ) {
     fail('submit chapter', new Error(`Unexpected submission result: ${data}`))
+  }
+
+  return data
+}
+
+export async function submitAlphaStory(
+  submission: StorySubmission,
+): Promise<StorySubmissionResult> {
+  const { data, error } = await getSupabaseAdminClient().rpc(
+    'submit_alpha_story',
+    {
+      p_artifact_id: submission.artifactId,
+      p_event: submission.event,
+      p_fingerprint: submission.fingerprint,
+      p_instagram_handle: submission.instagramHandle,
+      p_message_to_future_holders: submission.messageToFutureHolders,
+      p_next_destination: submission.nextDestination,
+      p_story: submission.story,
+      p_traveler_name: submission.travelerName,
+    },
+  )
+
+  if (error) fail('submit alpha chapter', error)
+
+  if (
+    data !== 'accepted' &&
+    data !== 'artifact_not_found' &&
+    data !== 'rate_limited'
+  ) {
+    fail(
+      'submit alpha chapter',
+      new Error(`Unexpected alpha submission result: ${data}`),
+    )
   }
 
   return data
