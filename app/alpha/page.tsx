@@ -52,7 +52,7 @@ export default async function AlphaPage() {
               return (
                 <article
                   key={artifact.id}
-                  className="rounded-2xl border border-yellow-700/30 bg-black/50 p-5 transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)]"
+                  className="flex h-full flex-col rounded-2xl border border-yellow-700/30 bg-black/50 p-5 transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)]"
                 >
                   <div className="mb-5 aspect-[5/3] overflow-hidden rounded-xl border border-yellow-700/40 bg-black">
                     {artifact.image_url ? (
@@ -85,14 +85,16 @@ export default async function AlphaPage() {
                     )}
                   </div>
 
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-600">
-                    {artifact.relic_title}
-                  </p>
-                  <h2 className="mb-2 font-serif text-3xl text-white">
-                    {artifact.name}
-                  </h2>
-                  <p className="mb-5 text-yellow-400">{artifact.id}</p>
-                  <div className="grid gap-3">
+                  <div className="mb-5 md:min-h-40">
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-600">
+                      {artifact.relic_title}
+                    </p>
+                    <h2 className="mb-2 font-serif text-3xl text-white md:min-h-20">
+                      {artifact.name}
+                    </h2>
+                    <p className="text-yellow-400">{artifact.id}</p>
+                  </div>
+                  <div className="mt-auto grid gap-3">
                     <Link
                       href={`/alpha/log/${artifact.id}`}
                       className="rounded-xl bg-yellow-500 px-5 py-4 text-center font-bold tracking-wide text-black transition hover:bg-yellow-400"
