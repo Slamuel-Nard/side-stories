@@ -168,8 +168,20 @@ export async function submitStory(
 export async function submitAlphaStory(
   submission: StorySubmission,
 ): Promise<StorySubmissionResult> {
-  const supabase = getSupabaseAdminClient()
-  const { data, error } = await supabase.rpc('submit_alpha_story', {
+  let supabase = getSupabaseReadClient()
+  let usingAdminClient = false
+
+  try {
+    supabase = getSupabaseAdminClient()
+    usingAdminClient = true
+  } catch (error) {
+    console.error(
+      'Supabase alpha admin client is unavailable; trying public alpha RPC',
+      error,
+    )
+  }
+
+  let { data, error } = await supabase.rpc('submit_alpha_story', {
     p_artifact_id: submission.artifactId,
     p_event: submission.event,
     p_fingerprint: submission.fingerprint,
@@ -179,6 +191,27 @@ export async function submitAlphaStory(
     p_story: submission.story,
     p_traveler_name: submission.travelerName,
   })
+
+  if (error && usingAdminClient) {
+    console.error(
+      'Supabase submit alpha chapter admin RPC failed; trying public alpha RPC',
+      error,
+    )
+
+    const fallback = await getSupabaseReadClient().rpc('submit_alpha_story', {
+      p_artifact_id: submission.artifactId,
+      p_event: submission.event,
+      p_fingerprint: submission.fingerprint,
+      p_instagram_handle: submission.instagramHandle,
+      p_message_to_future_holders: submission.messageToFutureHolders,
+      p_next_destination: submission.nextDestination,
+      p_story: submission.story,
+      p_traveler_name: submission.travelerName,
+    })
+
+    data = fallback.data
+    error = fallback.error
+  }
 
   if (error) {
     console.error(
