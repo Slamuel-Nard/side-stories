@@ -5,7 +5,11 @@ import { connection } from 'next/server'
 
 import { createAlphaChapter } from '@/app/alpha/log/actions'
 import { ChapterForm } from '@/app/log/[id]/chapter-form'
-import { getArtifactImageUrl } from '@/lib/artifact-display'
+import {
+  getArtifactImageLayout,
+  getArtifactImageUrl,
+  getQrMaskStyle,
+} from '@/lib/artifact-display'
 import { getAlphaArtifact, getAlphaArtifactChapterCount } from '@/lib/data'
 
 export default async function AlphaLogPage({
@@ -21,6 +25,8 @@ export default async function AlphaLogPage({
   ])
 
   if (!artifact) notFound()
+
+  const imageLayout = getArtifactImageLayout(artifact.id)
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-yellow-950 via-black to-black p-6 text-white">
@@ -58,14 +64,28 @@ export default async function AlphaLogPage({
         {artifact.image_url ? (
           <div className="relative mx-auto mb-10 aspect-[1050/600] max-w-xl">
             <div className="absolute inset-0 rounded-[2rem] bg-yellow-500/20 blur-3xl" />
-            <Image
-              src={getArtifactImageUrl(artifact.image_url)}
-              alt={artifact.name}
-              fill
-              priority
-              sizes="(min-width: 768px) 576px, 90vw"
-              className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_35px_rgba(250,204,21,0.22)]"
-            />
+            <div className="flex h-full w-full items-center justify-center">
+              <div
+                className="relative h-full"
+                style={{
+                  aspectRatio: `${imageLayout.width} / ${imageLayout.height}`,
+                }}
+              >
+                <Image
+                  src={getArtifactImageUrl(artifact.image_url)}
+                  alt={artifact.name}
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 576px, 90vw"
+                  className="rounded-2xl border border-yellow-700/60 object-contain shadow-[0_0_35px_rgba(250,204,21,0.22)]"
+                />
+                <div
+                  aria-hidden="true"
+                  style={getQrMaskStyle(artifact.id)}
+                  className="absolute z-10 aspect-square rounded-sm bg-black shadow-[0_0_8px_rgba(0,0,0,0.95)]"
+                />
+              </div>
+            </div>
           </div>
         ) : null}
 
