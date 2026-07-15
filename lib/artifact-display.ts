@@ -10,45 +10,45 @@ type ArtifactImageLayout = {
 
 const artifactImages: Record<string, ArtifactImageLayout> = {
   'M-0001': {
-    width: 630,
-    height: 386,
-    qr: { left: 79.36, top: 61.92, width: 11.59 },
+    width: 1028,
+    height: 650,
+    qr: { left: 77.43, top: 63.38, width: 11.67 },
   },
   'A-0001': {
-    width: 1608,
-    height: 975,
-    qr: { left: 78.04, top: 62.05, width: 11.87 },
+    width: 1028,
+    height: 650,
+    qr: { left: 79.09, top: 61.38, width: 12.55 },
   },
   'R-0001': {
-    width: 661,
-    height: 380,
-    qr: { left: 78.22, top: 66.58, width: 11.96 },
+    width: 1028,
+    height: 650,
+    qr: { left: 77.82, top: 63.38, width: 11.09 },
   },
   'F-0001': {
-    width: 630,
-    height: 386,
-    qr: { left: 78.41, top: 62.17, width: 11.59 },
+    width: 1028,
+    height: 650,
+    qr: { left: 78.31, top: 61.85, width: 11.87 },
   },
   'H-0001': {
-    width: 633,
-    height: 386,
-    qr: { left: 77.73, top: 62.17, width: 12.32 },
+    width: 1028,
+    height: 650,
+    qr: { left: 76.65, top: 59.85, width: 12.65 },
   },
   'S-0001': {
-    width: 649,
-    height: 383,
-    qr: { left: 78.58, top: 63.71, width: 10.94 },
+    width: 1028,
+    height: 650,
+    qr: { left: 77.24, top: 63.69, width: 10.41 },
   },
   'D-0001': {
-    width: 1605,
-    height: 977,
-    qr: { left: 79.57, top: 66.63, width: 11.52 },
+    width: 1028,
+    height: 650,
+    qr: { left: 76.26, top: 64.62, width: 11.77 },
   },
 }
 
 const fallback: ArtifactImageLayout = {
-  width: 1050,
-  height: 600,
+  width: 1028,
+  height: 650,
   qr: { left: 78.5, top: 63, width: 11.5 },
 }
 
@@ -57,7 +57,7 @@ export function getArtifactImageLayout(artifactId: string) {
 }
 
 export function getArtifactImageUrl(imageUrl: string) {
-  return `${imageUrl}?v=20260625-edge-fix`
+  return `${imageUrl}?v=20260714-rounded-cards`
 }
 
 export function getQrMaskStyle(artifactId: string) {
