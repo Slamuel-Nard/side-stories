@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     localPatterns: [
       {
         pathname: "/artifacts/**",
-        search: "?v=20260625-edge-fix",
+        search: "?v=20260714-rounded-cards",
       },
     ],
   },
