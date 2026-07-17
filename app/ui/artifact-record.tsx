@@ -8,6 +8,7 @@ import {
   getQrMaskStyle,
 } from '@/lib/artifact-display'
 import { countUniqueLocations } from '@/lib/location'
+import { getChapterPhotoUrl } from '@/lib/chapter-photo-storage'
 import type { Database } from '@/lib/supabase/database.types'
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -29,6 +30,7 @@ type Story = Pick<
   | 'instagram_handle'
   | 'message_to_future_holders'
   | 'next_destination'
+  | 'photo_path'
   | 'story'
   | 'traveler_name'
 >
@@ -328,6 +330,19 @@ export function ArtifactRecord({
                     <p className="whitespace-pre-wrap text-lg leading-relaxed text-zinc-300">
                       {story.story}
                     </p>
+
+                    {story.photo_path ? (
+                      <div className="mt-6 overflow-hidden rounded-xl border border-yellow-700/30 bg-black/50">
+                        <Image
+                          src={getChapterPhotoUrl(story.photo_path)}
+                          alt={`Photo from chapter ${index + 1}`}
+                          width={1200}
+                          height={900}
+                          sizes="(min-width: 768px) 704px, 90vw"
+                          className="h-auto max-h-[36rem] w-full object-contain"
+                        />
+                      </div>
+                    ) : null}
 
                     {story.instagram_handle ? (
                       <div className="mt-6 border-t border-yellow-700/20 pt-4">

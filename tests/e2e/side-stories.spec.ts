@@ -41,12 +41,22 @@ test('invalid chapters preserve the form and show field errors', async ({
   page,
 }) => {
   await page.goto(`/log/${artifactId}`)
+  await expect(page.getByLabel(/chapter photo/i)).toBeVisible()
   await page.getByLabel(/tell the story/i).fill('Too short')
   await page.getByRole('button', { name: /seal this chapter/i }).click()
 
   await expect(page.getByRole('alert')).toContainText(/correct/i)
   await expect(page.getByText(/at least 20 characters/i)).toBeVisible()
   await expect(page.getByLabel(/tell the story/i)).toHaveValue('Too short')
+})
+
+test('alpha chapter forms allow an optional photo', async ({ page }) => {
+  await page.goto(`/alpha/log/${artifactId}`)
+  await expect(page.getByLabel(/chapter photo/i)).toBeVisible()
+  await expect(page.getByLabel(/chapter photo/i)).toHaveAttribute(
+    'accept',
+    'image/jpeg,image/png,image/webp',
+  )
 })
 
 test('valid chapters publish immediately with a public Instagram link', async ({

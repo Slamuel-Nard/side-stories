@@ -6,7 +6,7 @@ import { getSupabaseAdminClient, getSupabaseReadClient } from '@/lib/supabase/se
 const ARTIFACT_FIELDS =
   'id,name,quest,image_url,relic_title,display_order' as const
 const STORY_FIELDS =
-  'id,artifact_id,event,traveler_name,instagram_handle,story,next_destination,message_to_future_holders,created_at' as const
+  'id,artifact_id,event,traveler_name,instagram_handle,story,photo_path,next_destination,message_to_future_holders,created_at' as const
 const STORY_SUMMARY_FIELDS =
   'id,artifact_id,event,traveler_name,created_at' as const
 
@@ -129,6 +129,7 @@ export type StorySubmission = {
   instagramHandle: string | null
   messageToFutureHolders: string | null
   nextDestination: string | null
+  photoPath: string | null
   story: string
   travelerName: string | null
 }
@@ -148,6 +149,7 @@ export async function submitStory(
     p_instagram_handle: submission.instagramHandle,
     p_message_to_future_holders: submission.messageToFutureHolders,
     p_next_destination: submission.nextDestination,
+    p_photo_path: submission.photoPath,
     p_story: submission.story,
     p_traveler_name: submission.travelerName,
   })
@@ -188,6 +190,7 @@ export async function submitAlphaStory(
     p_instagram_handle: submission.instagramHandle,
     p_message_to_future_holders: submission.messageToFutureHolders,
     p_next_destination: submission.nextDestination,
+    p_photo_path: submission.photoPath,
     p_story: submission.story,
     p_traveler_name: submission.travelerName,
   })
@@ -205,6 +208,7 @@ export async function submitAlphaStory(
       p_instagram_handle: submission.instagramHandle,
       p_message_to_future_holders: submission.messageToFutureHolders,
       p_next_destination: submission.nextDestination,
+      p_photo_path: submission.photoPath,
       p_story: submission.story,
       p_traveler_name: submission.travelerName,
     })
@@ -225,6 +229,7 @@ export async function submitAlphaStory(
       instagram_handle: submission.instagramHandle,
       message_to_future_holders: submission.messageToFutureHolders,
       next_destination: submission.nextDestination,
+      photo_path: submission.photoPath,
       story: submission.story,
       traveler_name: submission.travelerName,
     })

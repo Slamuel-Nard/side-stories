@@ -8,6 +8,7 @@ import {
   initialChapterState,
   type ChapterActionState,
 } from '@/lib/chapter-submission'
+import { chapterPhotoTypes } from '@/lib/chapter-photo-validation'
 import type { ChapterFieldName } from '@/lib/chapter-validation'
 
 export type ChapterFormAction = (
@@ -22,7 +23,7 @@ function FieldError({
   field,
   state,
 }: {
-  field: ChapterFieldName
+  field: ChapterFieldName | 'photo'
   state: ChapterActionState
 }) {
   const errors = state.fieldErrors?.[field]
@@ -60,7 +61,11 @@ export function ChapterForm({
     state.fieldErrors?.[field]?.length ? `${field}-error` : undefined
 
   return (
-    <form action={formAction} className="space-y-6" noValidate>
+    <form
+      action={formAction}
+      className="space-y-6"
+      noValidate
+    >
       <input type="hidden" name="artifact_id" value={artifactId} />
       <div className="absolute -left-[10000px]" aria-hidden="true">
         <label htmlFor="website">Website</label>
@@ -164,6 +169,32 @@ export function ChapterForm({
           placeholder="What happened? Who did you meet? How did this artifact find you?"
         />
         <FieldError field="story" state={state} />
+      </div>
+
+      <div>
+        <label
+          htmlFor="photo"
+          className="mb-2 block text-sm font-semibold text-zinc-200"
+        >
+          Chapter photo <span className="text-zinc-500">(optional)</span>
+        </label>
+        <input
+          id="photo"
+          name="photo"
+          type="file"
+          accept={chapterPhotoTypes.join(',')}
+          disabled={pending}
+          aria-invalid={Boolean(state.fieldErrors?.photo)}
+          aria-describedby={
+            state.fieldErrors?.photo?.length ? 'photo-error' : 'photo-help'
+          }
+          className={`${fieldClassName} cursor-pointer file:mr-4 file:rounded-lg file:border-0 file:bg-yellow-500 file:px-4 file:py-2 file:font-semibold file:text-black hover:file:bg-yellow-400`}
+        />
+        <p id="photo-help" className="mt-2 text-sm text-zinc-500">
+          Add one JPEG, PNG, or WebP photo up to 5 MB. It will be public beneath
+          your chapter.
+        </p>
+        <FieldError field="photo" state={state} />
       </div>
 
       <div>

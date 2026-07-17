@@ -156,9 +156,6 @@ export default async function Home() {
             <div className="grid gap-5 md:grid-cols-3">
               {artifacts.map((artifact) => {
                 const imageLayout = getArtifactImageLayout(artifact.id)
-                const imageAspect = imageLayout.width / imageLayout.height
-                const frameAspect = 5 / 3
-                const fitByWidth = imageAspect >= frameAspect
 
                 return (
                 <Link
@@ -166,33 +163,31 @@ export default async function Home() {
                   href={`/archive/${artifact.id}`}
                   className="group rounded-2xl border border-yellow-700/30 bg-black/50 p-5 text-left transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)]"
                 >
-                  <div className="mb-5 aspect-[5/3] overflow-hidden rounded-xl border border-yellow-700/40 bg-black">
+                  <div
+                    className="relative mb-5 w-full overflow-hidden rounded-xl border border-yellow-700/40 bg-black"
+                    style={{
+                      aspectRatio: `${imageLayout.width} / ${imageLayout.height}`,
+                    }}
+                  >
                     {artifact.image_url ? (
-                      <div className="flex h-full w-full items-center justify-center">
+                      <>
+                        <Image
+                          src={getArtifactImageUrl(artifact.image_url)}
+                          alt={artifact.name}
+                          fill
+                          sizes="(min-width: 768px) 30vw, 90vw"
+                          className="object-contain"
+                        />
                         <div
-                          className="relative"
-                          style={{
-                            aspectRatio: `${imageLayout.width} / ${imageLayout.height}`,
-                            width: fitByWidth ? '100%' : 'auto',
-                            height: fitByWidth ? 'auto' : '100%',
-                          }}
-                        >
-                          <Image
-                            src={getArtifactImageUrl(artifact.image_url)}
-                            alt={artifact.name}
-                            fill
-                            sizes="(min-width: 768px) 30vw, 90vw"
-                            className="object-contain"
-                          />
-                          <div
-                            aria-hidden="true"
-                            style={getQrMaskStyle(artifact.id)}
-                            className="absolute z-10 aspect-square rounded-sm bg-black shadow-[0_0_6px_rgba(0,0,0,0.95)]"
-                          />
-                        </div>
-                      </div>
+                          aria-hidden="true"
+                          style={getQrMaskStyle(artifact.id)}
+                          className="absolute z-10 aspect-square rounded-sm bg-black shadow-[0_0_6px_rgba(0,0,0,0.95)]"
+                        />
+                      </>
                     ) : (
-                      <span className="text-5xl text-yellow-400">✦</span>
+                      <span className="flex h-full items-center justify-center text-5xl text-yellow-400">
+                        ✦
+                      </span>
                     )}
                   </div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-600">

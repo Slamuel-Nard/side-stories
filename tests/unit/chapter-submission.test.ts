@@ -108,4 +108,57 @@ describe('chapter submission processing', () => {
       }),
     )
   })
+
+  it('uploads an optional photo and submits its storage path', async () => {
+    const formData = validForm()
+    const photo = new File(['photo bytes'], 'chapter.jpg', {
+      type: 'image/jpeg',
+    })
+    formData.set('photo', photo)
+    const uploadPhoto = vi
+      .fn()
+      .mockResolvedValue('standard/M-0001/photo.jpg')
+    const submit = vi.fn().mockResolvedValue('accepted')
+
+    const result = await processChapterSubmission(
+      formData,
+      'fingerprint',
+      {
+        artifactExists: vi.fn().mockResolvedValue(true),
+        submit,
+        uploadPhoto,
+      },
+    )
+
+    expect(result.status).toBe('accepted')
+    expect(uploadPhoto).toHaveBeenCalledWith(photo, 'M-0001')
+    expect(submit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        photoPath: 'standard/M-0001/photo.jpg',
+      }),
+    )
+  })
+
+  it('removes an uploaded photo when the chapter is rate limited', async () => {
+    const formData = validForm()
+    formData.set(
+      'photo',
+      new File(['photo bytes'], 'chapter.png', { type: 'image/png' }),
+    )
+    const removePhoto = vi.fn().mockResolvedValue(undefined)
+
+    const result = await processChapterSubmission(
+      formData,
+      'fingerprint',
+      {
+        artifactExists: vi.fn().mockResolvedValue(true),
+        removePhoto,
+        submit: vi.fn().mockResolvedValue('rate_limited'),
+        uploadPhoto: vi.fn().mockResolvedValue('alpha/M-0001/photo.png'),
+      },
+    )
+
+    expect(result.status).toBe('error')
+    expect(removePhoto).toHaveBeenCalledWith('alpha/M-0001/photo.png')
+  })
 })

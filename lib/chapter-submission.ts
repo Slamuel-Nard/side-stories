@@ -5,13 +5,14 @@ import {
   type ChapterFieldName,
   type ChapterFormValues,
 } from '@/lib/chapter-validation'
+import { validateChapterPhoto } from '@/lib/chapter-photo-validation'
 import type {
   StorySubmission,
   StorySubmissionResult,
 } from '@/lib/data'
 
 export type ChapterActionState = {
-  fieldErrors?: Partial<Record<ChapterFieldName, string[]>>
+  fieldErrors?: Partial<Record<ChapterFieldName | 'photo', string[]>>
   message?: string
   status: 'idle' | 'error'
   values: ChapterFormValues
@@ -24,7 +25,22 @@ export const initialChapterState: ChapterActionState = {
 
 export type ChapterSubmissionDependencies = {
   artifactExists: (artifactId: string) => Promise<boolean>
+  removePhoto?: (path: string) => Promise<void>
   submit: (submission: StorySubmission) => Promise<StorySubmissionResult>
+  uploadPhoto?: (file: File, artifactId: string) => Promise<string>
+}
+
+async function cleanUpPhoto(
+  path: string | null,
+  removePhoto?: (path: string) => Promise<void>,
+) {
+  if (!path || !removePhoto) return
+
+  try {
+    await removePhoto(path)
+  } catch (error) {
+    console.error('Unable to clean up rejected chapter photo', error)
+  }
 }
 
 export async function processChapterSubmission(
@@ -37,20 +53,30 @@ export async function processChapterSubmission(
 > {
   const values = valuesFromFormData(formData)
   const validation = validateChapter(formData)
+  const photoValidation = validateChapterPhoto(formData)
 
-  if (!validation.success) {
+  if (!validation.success || !photoValidation.success) {
+    const fieldErrors: ChapterActionState['fieldErrors'] = validation.success
+      ? {}
+      : validation.error.flatten().fieldErrors
+
+    if (!photoValidation.success) {
+      fieldErrors.photo = [photoValidation.error]
+    }
+
     return {
       status: 'error',
       state: {
         status: 'error',
         message: 'Please correct the highlighted fields.',
-        fieldErrors: validation.error.flatten().fieldErrors,
+        fieldErrors,
         values,
       },
     }
   }
 
   const chapter = validation.data
+  let photoPath: string | null = null
 
   try {
     if (!(await dependencies.artifactExists(chapter.artifact_id))) {
@@ -64,6 +90,17 @@ export async function processChapterSubmission(
       }
     }
 
+    if (photoValidation.file) {
+      if (!dependencies.uploadPhoto) {
+        throw new Error('Chapter photo uploads are not configured.')
+      }
+
+      photoPath = await dependencies.uploadPhoto(
+        photoValidation.file,
+        chapter.artifact_id,
+      )
+    }
+
     const result = await dependencies.submit({
       artifactId: chapter.artifact_id,
       event: chapter.event,
@@ -71,11 +108,13 @@ export async function processChapterSubmission(
       instagramHandle: chapter.instagram_handle,
       messageToFutureHolders: chapter.message_to_future_holders,
       nextDestination: chapter.next_destination,
+      photoPath,
       story: chapter.story,
       travelerName: chapter.traveler_name,
     })
 
     if (result === 'rate_limited') {
+      await cleanUpPhoto(photoPath, dependencies.removePhoto)
       return {
         status: 'error',
         state: {
@@ -88,6 +127,7 @@ export async function processChapterSubmission(
     }
 
     if (result === 'artifact_not_found') {
+      await cleanUpPhoto(photoPath, dependencies.removePhoto)
       return {
         status: 'error',
         state: {
@@ -103,6 +143,7 @@ export async function processChapterSubmission(
       artifactId: chapter.artifact_id,
     }
   } catch {
+    await cleanUpPhoto(photoPath, dependencies.removePhoto)
     return {
       status: 'error',
       state: {

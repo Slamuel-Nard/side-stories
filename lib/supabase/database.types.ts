@@ -48,6 +48,7 @@ export type Database = {
           instagram_handle: string | null
           message_to_future_holders: string | null
           next_destination: string | null
+          photo_path: string | null
           story: string
           traveler_name: string | null
         }
@@ -59,6 +60,7 @@ export type Database = {
           instagram_handle?: string | null
           message_to_future_holders?: string | null
           next_destination?: string | null
+          photo_path?: string | null
           story: string
           traveler_name?: string | null
         }
@@ -70,6 +72,7 @@ export type Database = {
           instagram_handle?: string | null
           message_to_future_holders?: string | null
           next_destination?: string | null
+          photo_path?: string | null
           story?: string
           traveler_name?: string | null
         }
@@ -84,6 +87,7 @@ export type Database = {
           instagram_handle: string | null
           message_to_future_holders: string | null
           next_destination: string | null
+          photo_path: string | null
           story: string
           traveler_name: string | null
         }
@@ -95,6 +99,7 @@ export type Database = {
           instagram_handle?: string | null
           message_to_future_holders?: string | null
           next_destination?: string | null
+          photo_path?: string | null
           story: string
           traveler_name?: string | null
         }
@@ -106,6 +111,7 @@ export type Database = {
           instagram_handle?: string | null
           message_to_future_holders?: string | null
           next_destination?: string | null
+          photo_path?: string | null
           story?: string
           traveler_name?: string | null
         }
@@ -122,6 +128,7 @@ export type Database = {
           p_instagram_handle: string | null
           p_message_to_future_holders: string | null
           p_next_destination: string | null
+          p_photo_path: string | null
           p_story: string
           p_traveler_name: string | null
         }
@@ -135,6 +142,7 @@ export type Database = {
           p_instagram_handle: string | null
           p_message_to_future_holders: string | null
           p_next_destination: string | null
+          p_photo_path: string | null
           p_story: string
           p_traveler_name: string | null
         }

@@ -7,6 +7,10 @@ import {
   processChapterSubmission,
   type ChapterActionState,
 } from '@/lib/chapter-submission'
+import {
+  removeChapterPhoto,
+  uploadChapterPhoto,
+} from '@/lib/chapter-photo-storage'
 import { getArtifact, submitStory } from '@/lib/data'
 import {
   createSubmissionFingerprint,
@@ -46,6 +50,9 @@ export async function createChapter(
   )
   const result = await processChapterSubmission(formData, fingerprint, {
     artifactExists: async (artifactId) => Boolean(await getArtifact(artifactId)),
+    uploadPhoto: (file, artifactId) =>
+      uploadChapterPhoto(file, 'standard', artifactId),
+    removePhoto: removeChapterPhoto,
     submit: submitStory,
   })
 

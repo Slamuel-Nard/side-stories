@@ -47,6 +47,12 @@ Apply
 [`supabase/migrations/202606240001_harden_side_stories.sql`](supabase/migrations/202606240001_harden_side_stories.sql)
 through the Supabase SQL editor or your normal Supabase CLI migration workflow.
 
+Apply the remaining migrations in filename order as well. In particular,
+[`supabase/migrations/202607160001_add_chapter_photos.sql`](supabase/migrations/202607160001_add_chapter_photos.sql)
+adds optional photos to standard and alpha chapters and creates the public,
+read-only `chapter-photos` storage bucket. Uploads remain restricted to the
+server-side chapter action.
+
 The migration is idempotent and:
 
 - preserves existing artifact and story rows;
@@ -100,6 +106,8 @@ against a project where that mutation is acceptable.
 - Chapter writes execute in a Server Action using the service-role client.
 - Every submission is validated server-side and checked against a real
   artifact.
+- Optional chapter photos are restricted to JPEG, PNG, or WebP files no larger
+  than 5 MB. The browser cannot write directly to chapter storage.
 - A hidden honeypot rejects basic bots.
 - Raw IP addresses are never stored. The server creates an HMAC fingerprint,
   and the database accepts at most three successful submissions per
