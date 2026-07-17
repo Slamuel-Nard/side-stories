@@ -27,10 +27,11 @@ export async function uploadChapterPhoto(
 
   const safeArtifactId = artifactId.replace(/[^A-Za-z0-9_-]/g, '-')
   const path = `${lane}/${safeArtifactId}/${randomUUID()}.${extension}`
+  const bytes = new Uint8Array(await file.arrayBuffer())
   const { error } = await getSupabaseAdminClient()
     .storage
     .from(CHAPTER_PHOTO_BUCKET)
-    .upload(path, file, {
+    .upload(path, bytes, {
       cacheControl: '31536000',
       contentType: file.type,
       upsert: false,

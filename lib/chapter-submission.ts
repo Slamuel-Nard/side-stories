@@ -77,6 +77,7 @@ export async function processChapterSubmission(
 
   const chapter = validation.data
   let photoPath: string | null = null
+  let photoUploadAttempted = false
 
   try {
     if (!(await dependencies.artifactExists(chapter.artifact_id))) {
@@ -95,6 +96,7 @@ export async function processChapterSubmission(
         throw new Error('Chapter photo uploads are not configured.')
       }
 
+      photoUploadAttempted = true
       photoPath = await dependencies.uploadPhoto(
         photoValidation.file,
         chapter.artifact_id,
@@ -142,14 +144,17 @@ export async function processChapterSubmission(
       status: 'accepted',
       artifactId: chapter.artifact_id,
     }
-  } catch {
+  } catch (error) {
+    console.error('Chapter submission failed', error)
     await cleanUpPhoto(photoPath, dependencies.removePhoto)
     return {
       status: 'error',
       state: {
         status: 'error',
         message:
-          'The archive could not save your chapter. Your words are still here—please try again.',
+          photoUploadAttempted && !photoPath
+            ? 'The photo could not be uploaded. Please choose it again and try a JPEG, PNG, or WebP under 5 MB.'
+            : 'The archive could not save your chapter. Your words are still here—please try again.',
         values,
       },
     }

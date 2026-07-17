@@ -161,4 +161,27 @@ describe('chapter submission processing', () => {
     expect(result.status).toBe('error')
     expect(removePhoto).toHaveBeenCalledWith('alpha/M-0001/photo.png')
   })
+
+  it('returns a photo-specific message when an upload fails', async () => {
+    const formData = validForm()
+    formData.set(
+      'photo',
+      new File(['photo bytes'], 'chapter.webp', { type: 'image/webp' }),
+    )
+
+    const result = await processChapterSubmission(
+      formData,
+      'fingerprint',
+      {
+        artifactExists: vi.fn().mockResolvedValue(true),
+        submit: vi.fn(),
+        uploadPhoto: vi.fn().mockRejectedValue(new Error('upload failed')),
+      },
+    )
+
+    expect(result.status).toBe('error')
+    if (result.status === 'error') {
+      expect(result.state.message).toMatch(/photo could not be uploaded/i)
+    }
+  })
 })
