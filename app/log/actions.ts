@@ -8,14 +8,26 @@ import {
   type ChapterActionState,
 } from '@/lib/chapter-submission'
 import {
+  createSignedChapterPhotoUpload,
   removeChapterPhoto,
   uploadChapterPhoto,
+  verifyChapterPhotoPath,
 } from '@/lib/chapter-photo-storage'
 import { getArtifact, submitStory } from '@/lib/data'
 import {
   createSubmissionFingerprint,
   getClientIp,
 } from '@/lib/submission-security'
+
+export async function createChapterPhotoUpload(artifactId: string) {
+  const secret = process.env.SUBMISSION_HASH_SECRET
+
+  if (!secret || secret.length < 32 || !(await getArtifact(artifactId))) {
+    throw new Error('Chapter photo uploads are temporarily unavailable.')
+  }
+
+  return createSignedChapterPhotoUpload('standard', artifactId, secret)
+}
 
 export async function createChapter(
   _previousState: ChapterActionState,
@@ -54,6 +66,8 @@ export async function createChapter(
       uploadChapterPhoto(file, 'standard', artifactId),
     removePhoto: removeChapterPhoto,
     submit: submitStory,
+    validatePhotoPath: (path, signature) =>
+      verifyChapterPhotoPath(path, signature, 'standard', secret),
   })
 
   if (result.status === 'accepted') {

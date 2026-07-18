@@ -3,7 +3,10 @@
 import type { ReactNode } from 'react'
 import { useActionState, useRef, useState } from 'react'
 
-import { createChapter } from '@/app/log/actions'
+import {
+  createChapter,
+  createChapterPhotoUpload,
+} from '@/app/log/actions'
 import {
   initialChapterState,
   type ChapterActionState,
@@ -13,11 +16,16 @@ import {
   optimizeChapterPhoto,
 } from '@/lib/chapter-photo-client'
 import type { ChapterFieldName } from '@/lib/chapter-validation'
+import { getSupabaseBrowserClient } from '@/lib/supabase/browser'
 
 export type ChapterFormAction = (
   previousState: ChapterActionState,
   formData: FormData,
 ) => Promise<ChapterActionState>
+
+export type ChapterPhotoUploadAction = (
+  artifactId: string,
+) => Promise<{ path: string; signature: string; token: string }>
 
 const fieldClassName =
   'w-full rounded-xl border border-yellow-700/40 bg-black/50 p-4 text-white placeholder:text-zinc-500 focus:border-yellow-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60'
@@ -51,25 +59,60 @@ export function ChapterForm({
     </>
   ),
   pendingLabel = 'Sealing Chapter…',
+  photoUploadAction = createChapterPhotoUpload,
 }: {
   action?: ChapterFormAction
   artifactId: string
   buttonLabel?: string
   notice?: ReactNode
   pendingLabel?: string
+  photoUploadAction?: ChapterPhotoUploadAction
 }) {
   const [state, formAction, pending] = useActionState(action, initialChapterState)
   const [preparedPhoto, setPreparedPhoto] = useState<File | null>(null)
   const [photoMessage, setPhotoMessage] = useState<string | null>(null)
   const [preparingPhoto, setPreparingPhoto] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const photoSelection = useRef(0)
 
   const describedBy = (field: ChapterFieldName) =>
     state.fieldErrors?.[field]?.length ? `${field}-error` : undefined
 
-  const submitAction = (formData: FormData) => {
-    if (preparedPhoto) formData.set('photo', preparedPhoto)
-    formAction(formData)
+  const submitAction = async (formData: FormData) => {
+    if (!preparedPhoto) {
+      formAction(formData)
+      return
+    }
+
+    setUploadingPhoto(true)
+    setPhotoMessage('Uploading prepared photo…')
+
+    try {
+      const upload = await photoUploadAction(artifactId)
+      const { error } = await getSupabaseBrowserClient()
+        .storage
+        .from('chapter-photos')
+        .uploadToSignedUrl(upload.path, upload.token, preparedPhoto, {
+          cacheControl: '31536000',
+          contentType: preparedPhoto.type,
+          upsert: false,
+        })
+
+      if (error) throw error
+
+      formData.delete('photo')
+      formData.set('photo_path', upload.path)
+      formData.set('photo_signature', upload.signature)
+      setPhotoMessage('Photo uploaded. Sealing chapter…')
+      formAction(formData)
+    } catch (error) {
+      console.error('Direct chapter photo upload failed', error)
+      setPhotoMessage(
+        'The photo upload could not connect. Please check your signal and try again.',
+      )
+    } finally {
+      setUploadingPhoto(false)
+    }
   }
 
   const preparePhoto = async (file: File | undefined) => {
@@ -224,11 +267,15 @@ export function ChapterForm({
           name="photo"
           type="file"
           accept="image/*"
-          disabled={pending || preparingPhoto}
+          disabled={pending || preparingPhoto || uploadingPhoto}
           onChange={(event) => {
             void preparePhoto(event.currentTarget.files?.[0])
           }}
-          aria-invalid={Boolean(state.fieldErrors?.photo || photoMessage?.startsWith('This'))}
+          aria-invalid={Boolean(
+            state.fieldErrors?.photo ||
+              photoMessage?.startsWith('This') ||
+              photoMessage?.startsWith('The'),
+          )}
           aria-describedby={
             state.fieldErrors?.photo?.length ? 'photo-error' : 'photo-help'
           }
@@ -244,7 +291,7 @@ export function ChapterForm({
           </p>
         ) : photoMessage ? (
           <p
-            className={`mt-2 text-sm ${photoMessage.startsWith('This') ? 'text-red-300' : 'text-green-300'}`}
+            className={`mt-2 text-sm ${photoMessage.startsWith('This') || photoMessage.startsWith('The') ? 'text-red-300' : 'text-green-300'}`}
             aria-live="polite"
           >
             {photoMessage}
@@ -313,10 +360,22 @@ export function ChapterForm({
 
       <button
         type="submit"
-        disabled={pending || preparingPhoto || Boolean(photoMessage?.startsWith('This'))}
+        disabled={
+          pending ||
+          preparingPhoto ||
+          uploadingPhoto ||
+          Boolean(
+            photoMessage?.startsWith('This') ||
+              photoMessage?.startsWith('The'),
+          )
+        }
         className="w-full rounded-xl bg-yellow-500 py-5 text-xl font-bold tracking-wide text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition hover:bg-yellow-400 disabled:cursor-wait disabled:bg-yellow-700"
       >
-        {pending ? pendingLabel : buttonLabel}
+        {uploadingPhoto
+          ? 'Uploading Photo…'
+          : pending
+            ? pendingLabel
+            : buttonLabel}
       </button>
     </form>
   )

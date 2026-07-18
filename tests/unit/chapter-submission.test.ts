@@ -184,4 +184,55 @@ describe('chapter submission processing', () => {
       expect(result.state.message).toMatch(/photo could not be uploaded/i)
     }
   })
+
+  it('submits a verified direct-upload photo path without uploading again', async () => {
+    const formData = validForm()
+    const photoPath =
+      'standard/M-0001/12345678-1234-1234-1234-123456789abc.jpg'
+    const signature = 'a'.repeat(64)
+    formData.set('photo_path', photoPath)
+    formData.set('photo_signature', signature)
+    const submit = vi.fn().mockResolvedValue('accepted')
+    const uploadPhoto = vi.fn()
+
+    const result = await processChapterSubmission(
+      formData,
+      'fingerprint',
+      {
+        artifactExists: vi.fn().mockResolvedValue(true),
+        submit,
+        uploadPhoto,
+        validatePhotoPath: vi.fn().mockReturnValue(true),
+      },
+    )
+
+    expect(result.status).toBe('accepted')
+    expect(uploadPhoto).not.toHaveBeenCalled()
+    expect(submit).toHaveBeenCalledWith(
+      expect.objectContaining({ photoPath }),
+    )
+  })
+
+  it('rejects a direct-upload path with an invalid signature', async () => {
+    const formData = validForm()
+    formData.set(
+      'photo_path',
+      'standard/M-0001/12345678-1234-1234-1234-123456789abc.jpg',
+    )
+    formData.set('photo_signature', 'b'.repeat(64))
+    const submit = vi.fn()
+
+    const result = await processChapterSubmission(
+      formData,
+      'fingerprint',
+      {
+        artifactExists: vi.fn(),
+        submit,
+        validatePhotoPath: vi.fn().mockReturnValue(false),
+      },
+    )
+
+    expect(result.status).toBe('error')
+    expect(submit).not.toHaveBeenCalled()
+  })
 })

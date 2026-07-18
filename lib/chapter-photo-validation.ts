@@ -12,6 +12,10 @@ export type ChapterPhotoValidation =
   | { file: File | null; success: true }
   | { error: string; success: false }
 
+export type ChapterPhotoPathValidation =
+  | { path: string | null; signature: string | null; success: true }
+  | { error: string; success: false }
+
 export function validateChapterPhoto(formData: FormData): ChapterPhotoValidation {
   const value = formData.get('photo')
 
@@ -34,4 +38,24 @@ export function validateChapterPhoto(formData: FormData): ChapterPhotoValidation
   }
 
   return { file: value, success: true }
+}
+
+export function validateChapterPhotoPath(
+  formData: FormData,
+): ChapterPhotoPathValidation {
+  const path = String(formData.get('photo_path') ?? '')
+  const signature = String(formData.get('photo_signature') ?? '')
+
+  if (!path && !signature) {
+    return { path: null, signature: null, success: true }
+  }
+
+  if (
+    !/^(alpha|standard)\/[A-Za-z0-9_-]+\/[0-9a-f-]{36}\.jpg$/.test(path) ||
+    !/^[0-9a-f]{64}$/.test(signature)
+  ) {
+    return { success: false, error: 'The prepared photo upload expired.' }
+  }
+
+  return { path, signature, success: true }
 }

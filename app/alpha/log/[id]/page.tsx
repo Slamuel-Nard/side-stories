@@ -3,7 +3,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
 
-import { createAlphaChapter } from '@/app/alpha/log/actions'
+import {
+  createAlphaChapter,
+  createAlphaChapterPhotoUpload,
+} from '@/app/alpha/log/actions'
 import { ChapterForm } from '@/app/log/[id]/chapter-form'
 import {
   getArtifactImageLayout,
@@ -105,6 +108,7 @@ export default async function AlphaLogPage({
           artifactId={artifact.id}
           buttonLabel="✦ Seal Alpha Chapter"
           pendingLabel="Sealing Alpha Chapter…"
+          photoUploadAction={createAlphaChapterPhotoUpload}
           notice={
             <>
               ✦ This alpha chapter becomes public immediately on the festival

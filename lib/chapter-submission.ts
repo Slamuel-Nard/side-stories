@@ -5,7 +5,10 @@ import {
   type ChapterFieldName,
   type ChapterFormValues,
 } from '@/lib/chapter-validation'
-import { validateChapterPhoto } from '@/lib/chapter-photo-validation'
+import {
+  validateChapterPhoto,
+  validateChapterPhotoPath,
+} from '@/lib/chapter-photo-validation'
 import type {
   StorySubmission,
   StorySubmissionResult,
@@ -28,6 +31,7 @@ export type ChapterSubmissionDependencies = {
   removePhoto?: (path: string) => Promise<void>
   submit: (submission: StorySubmission) => Promise<StorySubmissionResult>
   uploadPhoto?: (file: File, artifactId: string) => Promise<string>
+  validatePhotoPath?: (path: string, signature: string) => boolean
 }
 
 async function cleanUpPhoto(
@@ -54,14 +58,23 @@ export async function processChapterSubmission(
   const values = valuesFromFormData(formData)
   const validation = validateChapter(formData)
   const photoValidation = validateChapterPhoto(formData)
+  const photoPathValidation = validateChapterPhotoPath(formData)
 
-  if (!validation.success || !photoValidation.success) {
+  if (
+    !validation.success ||
+    !photoValidation.success ||
+    !photoPathValidation.success
+  ) {
     const fieldErrors: ChapterActionState['fieldErrors'] = validation.success
       ? {}
       : validation.error.flatten().fieldErrors
 
     if (!photoValidation.success) {
       fieldErrors.photo = [photoValidation.error]
+    }
+
+    if (!photoPathValidation.success) {
+      fieldErrors.photo = [photoPathValidation.error]
     }
 
     return {
@@ -76,8 +89,27 @@ export async function processChapterSubmission(
   }
 
   const chapter = validation.data
-  let photoPath: string | null = null
+  let photoPath = photoPathValidation.path
   let photoUploadAttempted = false
+
+  if (
+    photoPath &&
+    (!photoPathValidation.signature ||
+      !dependencies.validatePhotoPath?.(
+        photoPath,
+        photoPathValidation.signature,
+      ))
+  ) {
+    return {
+      status: 'error',
+      state: {
+        status: 'error',
+        message: 'The prepared photo upload expired. Please choose it again.',
+        fieldErrors: { photo: ['Please choose the photo again.'] },
+        values,
+      },
+    }
+  }
 
   try {
     if (!(await dependencies.artifactExists(chapter.artifact_id))) {
@@ -91,7 +123,7 @@ export async function processChapterSubmission(
       }
     }
 
-    if (photoValidation.file) {
+    if (!photoPath && photoValidation.file) {
       if (!dependencies.uploadPhoto) {
         throw new Error('Chapter photo uploads are not configured.')
       }
