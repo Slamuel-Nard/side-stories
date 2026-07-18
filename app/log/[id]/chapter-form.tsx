@@ -1,14 +1,17 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useActionState } from 'react'
+import { useActionState, useRef, useState } from 'react'
 
 import { createChapter } from '@/app/log/actions'
 import {
   initialChapterState,
   type ChapterActionState,
 } from '@/lib/chapter-submission'
-import { chapterPhotoTypes } from '@/lib/chapter-photo-validation'
+import {
+  formatPhotoSize,
+  optimizeChapterPhoto,
+} from '@/lib/chapter-photo-client'
 import type { ChapterFieldName } from '@/lib/chapter-validation'
 
 export type ChapterFormAction = (
@@ -56,13 +59,51 @@ export function ChapterForm({
   pendingLabel?: string
 }) {
   const [state, formAction, pending] = useActionState(action, initialChapterState)
+  const [preparedPhoto, setPreparedPhoto] = useState<File | null>(null)
+  const [photoMessage, setPhotoMessage] = useState<string | null>(null)
+  const [preparingPhoto, setPreparingPhoto] = useState(false)
+  const photoSelection = useRef(0)
 
   const describedBy = (field: ChapterFieldName) =>
     state.fieldErrors?.[field]?.length ? `${field}-error` : undefined
 
+  const submitAction = (formData: FormData) => {
+    if (preparedPhoto) formData.set('photo', preparedPhoto)
+    formAction(formData)
+  }
+
+  const preparePhoto = async (file: File | undefined) => {
+    const selection = ++photoSelection.current
+    setPreparedPhoto(null)
+    setPhotoMessage(null)
+
+    if (!file) return
+
+    setPreparingPhoto(true)
+
+    try {
+      const optimized = await optimizeChapterPhoto(file)
+      if (selection !== photoSelection.current) return
+
+      setPreparedPhoto(optimized)
+      setPhotoMessage(
+        optimized.size < file.size
+          ? `Ready — automatically reduced from ${formatPhotoSize(file.size)} to ${formatPhotoSize(optimized.size)}.`
+          : `Ready — ${formatPhotoSize(optimized.size)}.`,
+      )
+    } catch {
+      if (selection !== photoSelection.current) return
+      setPhotoMessage(
+        'This photo could not be prepared. Please choose another photo.',
+      )
+    } finally {
+      if (selection === photoSelection.current) setPreparingPhoto(false)
+    }
+  }
+
   return (
     <form
-      action={formAction}
+      action={submitAction}
       className="space-y-6"
       noValidate
     >
@@ -182,18 +223,33 @@ export function ChapterForm({
           id="photo"
           name="photo"
           type="file"
-          accept={chapterPhotoTypes.join(',')}
-          disabled={pending}
-          aria-invalid={Boolean(state.fieldErrors?.photo)}
+          accept="image/*"
+          disabled={pending || preparingPhoto}
+          onChange={(event) => {
+            void preparePhoto(event.currentTarget.files?.[0])
+          }}
+          aria-invalid={Boolean(state.fieldErrors?.photo || photoMessage?.startsWith('This'))}
           aria-describedby={
             state.fieldErrors?.photo?.length ? 'photo-error' : 'photo-help'
           }
           className={`${fieldClassName} cursor-pointer file:mr-4 file:rounded-lg file:border-0 file:bg-yellow-500 file:px-4 file:py-2 file:font-semibold file:text-black hover:file:bg-yellow-400`}
         />
         <p id="photo-help" className="mt-2 text-sm text-zinc-500">
-          Add one JPEG, PNG, or WebP photo up to 5 MB. It will be public beneath
-          your chapter.
+          Choose a photo from your phone. It will be automatically prepared and
+          published beneath your chapter.
         </p>
+        {preparingPhoto ? (
+          <p className="mt-2 text-sm text-yellow-400" aria-live="polite">
+            Preparing photo…
+          </p>
+        ) : photoMessage ? (
+          <p
+            className={`mt-2 text-sm ${photoMessage.startsWith('This') ? 'text-red-300' : 'text-green-300'}`}
+            aria-live="polite"
+          >
+            {photoMessage}
+          </p>
+        ) : null}
         <FieldError field="photo" state={state} />
       </div>
 
@@ -257,7 +313,7 @@ export function ChapterForm({
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || preparingPhoto || Boolean(photoMessage?.startsWith('This'))}
         className="w-full rounded-xl bg-yellow-500 py-5 text-xl font-bold tracking-wide text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition hover:bg-yellow-400 disabled:cursor-wait disabled:bg-yellow-700"
       >
         {pending ? pendingLabel : buttonLabel}

@@ -55,7 +55,7 @@ test('alpha chapter forms allow an optional photo', async ({ page }) => {
   await expect(page.getByLabel(/chapter photo/i)).toBeVisible()
   await expect(page.getByLabel(/chapter photo/i)).toHaveAttribute(
     'accept',
-    'image/jpeg,image/png,image/webp',
+    'image/*',
   )
 })
 
