@@ -17,7 +17,7 @@ export type ChapterLane = 'alpha' | 'standard'
 export type SignedChapterPhotoUpload = {
   path: string
   signature: string
-  token: string
+  signedUrl: string
 }
 
 function chapterPhotoPath(lane: ChapterLane, artifactId: string) {
@@ -48,7 +48,7 @@ export async function createSignedChapterPhotoUpload(
   return {
     path,
     signature: signChapterPhotoPath(path, secret),
-    token: data.token,
+    signedUrl: data.signedUrl,
   }
 }
 

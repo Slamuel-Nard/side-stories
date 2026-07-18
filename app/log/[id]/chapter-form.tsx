@@ -16,7 +16,6 @@ import {
   optimizeChapterPhoto,
 } from '@/lib/chapter-photo-client'
 import type { ChapterFieldName } from '@/lib/chapter-validation'
-import { getSupabaseBrowserClient } from '@/lib/supabase/browser'
 
 export type ChapterFormAction = (
   previousState: ChapterActionState,
@@ -25,7 +24,11 @@ export type ChapterFormAction = (
 
 export type ChapterPhotoUploadAction = (
   artifactId: string,
-) => Promise<{ path: string; signature: string; token: string }>
+) => Promise<{
+  path: string
+  signature: string
+  signedUrl: string
+}>
 
 const fieldClassName =
   'w-full rounded-xl border border-yellow-700/40 bg-black/50 p-4 text-white placeholder:text-zinc-500 focus:border-yellow-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60'
@@ -89,16 +92,18 @@ export function ChapterForm({
 
     try {
       const upload = await photoUploadAction(artifactId)
-      const { error } = await getSupabaseBrowserClient()
-        .storage
-        .from('chapter-photos')
-        .uploadToSignedUrl(upload.path, upload.token, preparedPhoto, {
-          cacheControl: '31536000',
-          contentType: preparedPhoto.type,
-          upsert: false,
-        })
+      const uploadBody = new FormData()
+      uploadBody.append('cacheControl', '31536000')
+      uploadBody.append('', preparedPhoto)
+      const uploadResponse = await fetch(upload.signedUrl, {
+        method: 'PUT',
+        headers: { 'x-upsert': 'false' },
+        body: uploadBody,
+      })
 
-      if (error) throw error
+      if (!uploadResponse.ok) {
+        throw new Error(`Photo storage returned ${uploadResponse.status}.`)
+      }
 
       formData.delete('photo')
       formData.set('photo_path', upload.path)
