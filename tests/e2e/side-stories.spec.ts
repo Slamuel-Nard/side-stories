@@ -59,6 +59,26 @@ test('alpha chapter forms allow an optional photo', async ({ page }) => {
   )
 })
 
+test('alpha landing cards open their stories before chapter submission', async ({
+  page,
+}) => {
+  await page.goto('/alpha')
+
+  await expect(
+    page.getByRole('region', { name: 'Alpha archive totals' }),
+  ).toBeVisible()
+  await page
+    .getByRole('link', { name: new RegExp(`View Story`, 'i') })
+    .first()
+    .click()
+
+  await expect(page).toHaveURL(/\/alpha\/archive\//)
+  await expect(page.getByText('The Alpha Chronicle')).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Seal Another Alpha Chapter' }),
+  ).toBeVisible()
+})
+
 test('valid chapters publish immediately with a public Instagram link', async ({
   page,
 }) => {

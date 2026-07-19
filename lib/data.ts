@@ -54,6 +54,31 @@ export async function getAlphaArtifacts() {
   return data
 }
 
+export async function getAlphaHomeData() {
+  const [artifactsResult, storiesResult] = await Promise.all([
+    getSupabaseReadClient()
+      .from('artifacts')
+      .select(ARTIFACT_FIELDS)
+      .in('id', [...ALPHA_ARTIFACT_IDS])
+      .order('display_order', { ascending: true }),
+    getSupabaseReadClient()
+      .from('alpha_stories')
+      .select(STORY_SUMMARY_FIELDS)
+      .in('artifact_id', [...ALPHA_ARTIFACT_IDS])
+      .order('created_at', { ascending: false }),
+  ])
+
+  if (artifactsResult.error) fail('load alpha artifacts', artifactsResult.error)
+  if (storiesResult.error) {
+    fail('load alpha chapter summaries', storiesResult.error)
+  }
+
+  return {
+    artifacts: artifactsResult.data,
+    stories: storiesResult.data,
+  }
+}
+
 export async function getAlphaArtifact(id: string) {
   if (!isAlphaArtifactId(id)) return null
   return getArtifact(id)

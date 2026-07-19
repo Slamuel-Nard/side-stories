@@ -7,11 +7,26 @@ import {
   getArtifactImageUrl,
   getQrMaskStyle,
 } from '@/lib/artifact-display'
-import { getAlphaArtifacts } from '@/lib/data'
+import { getAlphaHomeData } from '@/lib/data'
+import { countUniqueLocations } from '@/lib/location'
 
 export default async function AlphaPage() {
   await connection()
-  const artifacts = await getAlphaArtifacts()
+  const { artifacts, stories } = await getAlphaHomeData()
+  const travelerCount = new Set(
+    stories.map((story) => story.traveler_name).filter(Boolean),
+  ).size
+  const locationCount = countUniqueLocations(
+    stories.map((story) => story.event),
+  )
+  const chapterCounts = new Map<string, number>()
+
+  for (const story of stories) {
+    chapterCounts.set(
+      story.artifact_id,
+      (chapterCounts.get(story.artifact_id) ?? 0) + 1,
+    )
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-yellow-950 via-black to-black text-white">
@@ -24,8 +39,8 @@ export default async function AlphaPage() {
             Festival Alpha Test
           </h1>
           <p className="mx-auto max-w-3xl text-xl leading-relaxed text-zinc-300">
-            Which card are you holding? Choose your relic below, then add your
-            chapter to the alpha-test story.
+            Choose a relic to explore its quest, read every chapter, and follow
+            the story it has gathered across the festival.
           </p>
         </section>
 
@@ -40,6 +55,41 @@ export default async function AlphaPage() {
           </p>
         </section>
 
+        <section
+          aria-label="Alpha archive totals"
+          className="mb-16 grid grid-cols-2 gap-4 md:grid-cols-4"
+        >
+          {[
+            [artifacts.length, 'Alpha Relics'],
+            [stories.length, 'Chapters Recorded'],
+            [travelerCount, 'Travelers'],
+            [locationCount, 'Places Visited'],
+          ].map(([value, label]) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-yellow-700/40 bg-black/40 p-5 text-center md:p-6"
+            >
+              <p className="font-serif text-4xl text-yellow-400">{value}</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.16em] text-zinc-400 md:tracking-[0.2em]">
+                {label}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        <section className="mb-10 text-center">
+          <p className="mb-4 text-sm uppercase tracking-[0.45em] text-yellow-400">
+            Festival Artifacts
+          </p>
+          <h2 className="font-serif text-4xl text-yellow-400 md:text-5xl">
+            Choose a Story to Explore
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-zinc-400">
+            Tap any card to see its full journey. If you are holding it, you can
+            add your chapter from inside the story.
+          </p>
+        </section>
+
         {artifacts.length === 0 ? (
           <p className="text-center text-zinc-400">
             The alpha cards are not available right now.
@@ -50,9 +100,10 @@ export default async function AlphaPage() {
               const imageLayout = getArtifactImageLayout(artifact.id)
 
               return (
-                <article
+                <Link
                   key={artifact.id}
-                  className="flex h-full flex-col rounded-2xl border border-yellow-700/30 bg-black/50 p-5 transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)]"
+                  href={`/alpha/archive/${artifact.id}`}
+                  className="group flex h-full flex-col rounded-2xl border border-yellow-700/30 bg-black/50 p-5 text-left transition hover:border-yellow-400 hover:shadow-[0_0_30px_rgba(250,204,21,0.16)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-yellow-400"
                 >
                   <div
                     className="relative mb-5 w-full overflow-hidden rounded-xl border border-yellow-700/40 bg-black"
@@ -82,30 +133,30 @@ export default async function AlphaPage() {
                     )}
                   </div>
 
-                  <div className="mb-5 md:min-h-40">
+                  <div className="flex flex-1 flex-col">
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-yellow-600">
                       {artifact.relic_title}
                     </p>
-                    <h2 className="mb-2 font-serif text-3xl text-white md:min-h-20">
+                    <h3 className="mb-2 font-serif text-3xl text-white transition group-hover:text-yellow-400">
                       {artifact.name}
-                    </h2>
-                    <p className="text-yellow-400">{artifact.id}</p>
+                    </h3>
+                    <p className="mb-4 text-yellow-400">{artifact.id}</p>
+                    <p className="mb-6 line-clamp-3 leading-relaxed text-zinc-400">
+                      {artifact.quest}
+                    </p>
+                    <div className="mt-auto flex items-center justify-between border-t border-yellow-700/30 pt-4">
+                      <span className="text-sm uppercase tracking-[0.18em] text-zinc-400">
+                        {chapterCounts.get(artifact.id) ?? 0}{' '}
+                        {(chapterCounts.get(artifact.id) ?? 0) === 1
+                          ? 'Chapter'
+                          : 'Chapters'}
+                      </span>
+                      <span className="font-semibold text-yellow-400 transition group-hover:translate-x-1">
+                        View Story →
+                      </span>
+                    </div>
                   </div>
-                  <div className="mt-auto grid gap-3">
-                    <Link
-                      href={`/alpha/log/${artifact.id}`}
-                      className="rounded-xl bg-yellow-500 px-5 py-4 text-center font-bold tracking-wide text-black transition hover:bg-yellow-400"
-                    >
-                      I&apos;m Holding This Card
-                    </Link>
-                    <Link
-                      href={`/alpha/archive/${artifact.id}`}
-                      className="rounded-xl border border-yellow-700/50 px-5 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-yellow-400 transition hover:border-yellow-400"
-                    >
-                      Read Alpha Story
-                    </Link>
-                  </div>
-                </article>
+                </Link>
               )
             })}
           </div>
